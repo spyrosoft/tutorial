@@ -4,8 +4,12 @@
 
 * Individual Sections
 ** Attributes
+*** Intro/instruction set
 *** Completed Problem Count
 *** Incorrect Problem Count
+
+* Problems
+** Some problems have multiple correct answers
 
 * Tutorial Demonstration
 ** Include a navigation of some sort (sidebar?) displaying all of the sections, and highlight the active section
