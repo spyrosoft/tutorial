@@ -8,4 +8,8 @@ Tutorials are broken up into sections.
 
 ## Installation
 
-At the moment, jQuery is a dependency. Plop a <script src="tutorial.js"></script> anywhere after jQuery is included, and you're all set.
+At the moment, jQuery is a dependency. Plop a
+```html
+<script src="tutorial.js"></script>
+```
+anywhere after jQuery is included, and you're all set.
