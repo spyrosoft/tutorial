@@ -1,0 +1,12 @@
+* Tutorial
+** Attributes
+*** Sections
+
+* Individual Sections
+** Attributes
+*** Completed Problem Count
+*** Incorrect Problem Count
+
+* Tutorial Demonstration
+** Include a navigation of some sort (sidebar?) displaying all of the sections, and highlight the active section
+*** Make it possible to jump around sections by clicking on them
