@@ -9,8 +9,14 @@
 *** Incorrect Problem Count
 
 * Problems
-** Some problems have multiple correct answers
+** Attributes
+*** Answers - some problems have multiple correct answers
+*** Explanation - consider adding a reason that the answer is such for when the user gets the problem incorrect
 
 * Tutorial Demonstration
 ** Include a navigation of some sort (sidebar?) displaying all of the sections, and highlight the active section
 *** Make it possible to jump around sections by clicking on them
+** Gamification
+*** Ideally tutorials utilize some sort of gamification - endorphins are highly under-utilized in most tutorials
+** If possible, display a progress bar for each section
+*** Maybe for both completed problems and review problems
