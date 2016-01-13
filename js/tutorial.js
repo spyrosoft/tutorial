@@ -8,7 +8,7 @@ var Tutorial = function() {
 		var incorrect_problems = new Array();
 		var problems = new Array();
 		
-		//TODO: Try breaking out the bigger functions into functions to avoid clutter
+		//TODO: Try moving the bigger functions elsewhere to avoid clutter
 		return {
 			'title' : function() {
 				return title;
