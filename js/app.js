@@ -1,57 +1,62 @@
 $(document).foundation();
 
 // I like to use objects for organizing data
-// It's easy to rearrange things, and everything is in one place
-var simpleAdditionData = {
-	'ones' : {
+// It's easy to rearrange things, everything is in one place, and it's simple to swap out with data pulled from a server
+var simpleAdditionData = [
+	{
+		'identifier' : 'ones',
 		'title' : 'Ones',
 		'intro' : 'Practice adding one to other numbers such as two, or five.',
-		'problems' : {
-			'1+1' : {
+		'problems' : [
+			{
+				'identifier' : '1+1',
 				'prompt' : '1 + 1',
 				'answerOrAnswers' : '2',
 				// Explanations are optional
 				'explanation' : 'If you have an apple, and then another apple is given to you somehow, now you have two apples. Awesome.'
 			},
-			'1+2' : {
+			{
+				'identifier' : '1+2',
 				'prompt' : '1 + 2',
 				'answerOrAnswers' : '3'
 			},
-			'1+3' : {
+			{
+				'identifier' : '1+3',
 				'prompt' : '1 + 3',
 				'answerOrAnswers' : '4'
 			},
-			'1+4' : {
+			{
+				'identifier' : '1+4',
 				'prompt' : '1 + 4',
 				'answerOrAnswers' : '5'
 			}
-		}
+		]
 	}
-};
+];
 
 // Create a new instance of Tutorial
-var simpleAddition = new Tutorial();
+var simpleAdditionTutorial = new Tutorial();
 
-for ( var sectionIdentifier in simpleAdditionData ) {
-	var section = simpleAddition.addSection(
-		sectionIdentifier,
-		simpleAdditionData[ sectionIdentifier ].title,
-		simpleAdditionData[ sectionIdentifier ].intro
+for ( var sectionIndex in simpleAdditionData ) {
+	var section = simpleAdditionTutorial.addSection(
+		simpleAdditionData[ sectionIndex ].identifier,
+		simpleAdditionData[ sectionIndex ].title,
+		simpleAdditionData[ sectionIndex ].intro
 	);
 	
-	addProblemsToSection( section, simpleAdditionData[ sectionIdentifier ].problems );
+	addProblemsToSection( section, simpleAdditionData[ sectionIndex ].problems );
 }
 
 function addProblemsToSection( section, problems ) {
-	for ( var problemIdentifier in problems ) {
+	for ( var problemIndex in problems ) {
 		var explanation = null;
-		if ( problems[ problemIdentifier ].explanation ) {
-			explanation = problems[ problemIdentifier ].explanation;
+		if ( problems[ problemIndex ].explanation ) {
+			explanation = problems[ problemIndex ].explanation;
 		}
 		section.addProblem(
-			problemIdentifier,
-			problems[ problemIdentifier ].prompt,
-			problems[ problemIdentifier ].answer,
+			problems[ problemIndex ].identifier,
+			problems[ problemIndex ].prompt,
+			problems[ problemIndex ].answerOrAnswers,
 			explanation
 		);
 	}
