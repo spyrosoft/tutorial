@@ -23,7 +23,7 @@ var Tutorial = function() {
 				return incorrect_problems;
 			},
 			'addProblem' : function( identifier, prompt, answer_or_answers, explanation ) {
-				var newProblem = new Problem( identifier, prompt, answer_or_answers, explanation );
+				var newProblem = new Problem( prompt, answer_or_answers, explanation );
 				problems[ identifier ] = newProblem;
 			},
 			'addProblemAnswer' : function( identifier, new_answer ) {
@@ -38,9 +38,9 @@ var Tutorial = function() {
 			},
 			'checkProblem' : function( identifier, answer ) {
 				var current_problem = problems[ identifier ];
-				if ( current_problem instanceof Array ) {
+				if ( current_problem.answerOrAnswers() instanceof Array ) {
 					var problem_correct = false;
-					current_problem.forEach(
+					current_problem.answerOrAnswers().forEach(
 						function( current_problem_answer ) {
 							if ( current_problem_answer === answer ) {
 								problem_correct = true;
@@ -49,7 +49,7 @@ var Tutorial = function() {
 					);
 					return problem_correct;
 				} else {
-					return current_problem === answer;
+					return current_problem.answerOrAnswers() === answer;
 				}
 				return false;
 			}
@@ -68,7 +68,7 @@ var Tutorial = function() {
 			'answerOrAnswers' : function() {
 				return answer_or_answers;
 			},
-			'newExplanation' : function() {
+			'explanation' : function() {
 				return explanation;
 			}
 		};
