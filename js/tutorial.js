@@ -4,6 +4,7 @@ var Tutorial = function() {
 	var Section = function( new_title, new_intro ) {
 		var title = new_title;
 		var intro = new_intro;
+		var retries = 3;
 		var correct_problems = new Array();
 		var incorrect_problems = new Array();
 		var problems = new Array();
@@ -52,6 +53,9 @@ var Tutorial = function() {
 					return current_problem.answerOrAnswers() === answer;
 				}
 				return false;
+			},
+			'setTimesToRetryProblems' : function( new_retries ) {
+				retries = new_retries;
 			}
 		};
 	};
