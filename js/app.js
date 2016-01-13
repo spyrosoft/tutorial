@@ -12,7 +12,7 @@ var simpleAdditionData = [
 				'identifier' : '1+1',
 				'prompt' : '1 + 1',
 				'answerOrAnswers' : '2',
-				// Explanations are optional
+				// Problem explanations are optional
 				'explanation' : 'If you have an apple, and then another apple is given to you somehow, now you have two apples. Awesome.'
 			},
 			{
@@ -34,7 +34,6 @@ var simpleAdditionData = [
 	}
 ];
 
-// Create a new instance of Tutorial
 var simpleAdditionTutorial = new Tutorial();
 
 for ( var sectionIndex in simpleAdditionData ) {
