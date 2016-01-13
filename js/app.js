@@ -61,3 +61,67 @@ function addProblemsToSection( section, problems ) {
 	}
 }
 
+
+
+$( 'button.begin' ).on( 'click', begin );
+
+function begin() {
+	$( '.tutorial-intro' ).addClass( 'display-none' );
+	$( '.tutorial-content' ).removeClass( 'display-none' );
+}
+
+//TODO: Remove me when finished:
+begin();
+
+$( '.answer' ).focus();
+
+
+// Load the current section in the UI
+var currentSection;
+
+function loadSection( sectionIdentifier ) {
+	currentSection = simpleAdditionTutorial.getSection( sectionIdentifier );
+	$( '.section-title' ).html( currentSection.title() );
+}
+
+loadSection( simpleAdditionData[ 0 ][ 'identifier' ] );
+
+
+// Load the next problem into the UI
+var currentProblem;
+
+function nextProblem() {
+	currentProblem = currentSection.nextProblem();
+	loadCurrentProblem();
+}
+
+function loadCurrentProblem() {
+	$( '.prompt' ).html( currentProblem.prompt() );
+}
+
+nextProblem();
+
+
+
+$( 'input.answer' ).on( 'keydown', checkAnswerOnEnter );
+
+function checkAnswerOnEnter( keyEvent ) {
+	if ( checkForEnter( keyEvent ) ) {
+		checkAnswer();
+	}
+}
+
+function checkAnswer() {
+	var currentAnswer = $( '.answer' ).val();
+	if ( currentSection.checkAnswer( currentProblem[ 'identifier' ], currentAnswer ) ) {
+		console.log('yes')
+	} else {
+		console.log('no')
+	}
+}
+
+
+/* --------------------Utilities-------------------- */
+function checkForEnter( keyEvent ) {
+	return keyEvent.keyCode === 13;
+}

@@ -5,6 +5,7 @@ var Tutorial = function() {
 		var title = newTitle;
 		var intro = newIntro;
 		var retries = 3;
+		var problems = new Object();
 		var correctProblems = new Array();
 		var incorrectProblems = new Array();
 		var remainingProblems = new Array();
@@ -28,7 +29,8 @@ var Tutorial = function() {
 			},
 			'addProblem' : function( identifier, prompt, answerOrAnswers, explanation ) {
 				var newProblem = new Problem( prompt, answerOrAnswers, explanation );
-				remainingProblems[ identifier ] = newProblem;
+				problems[ identifier ] = newProblem;
+				remainingProblems.push( identifier );
 			},
 			'addProblemAnswer' : function( identifier, newAnswer ) {
 				if ( remainingProblems[ identifier ] instanceof Array ) {
@@ -42,10 +44,14 @@ var Tutorial = function() {
 			},
 			'nextProblem' : function() {
 				if ( remainingProblems.length === 0 ) { return null; }
-				next
+				var nextProblemIndex = Math.floor( Math.random() * remainingProblems.length );
+				var nextProblem = problems[ remainingProblems[ nextProblemIndex ] ];
+				nextProblem[ 'identifier' ] = remainingProblems[ nextProblemIndex ];
+				remainingProblems.splice( nextProblemIndex, 1 );
+				return nextProblem;
 			},
-			'checkProblem' : function( identifier, answer ) {
-				var currentProblem = remainingProblems[ identifier ];
+			'checkAnswer' : function( identifier, answer ) {
+				var currentProblem = problems[ identifier ];
 				if ( currentProblem.answerOrAnswers() instanceof Array ) {
 					var problemCorrect = false;
 					currentProblem.answerOrAnswers().forEach(

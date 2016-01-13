@@ -9,7 +9,7 @@
 	<link href="css/app.css" rel="stylesheet" />
 </head>
 <body>
-	<div class="row columns">
+	<div class="row columns tutorial-intro">
 		<h1>Tutorial Demonstration</h1>
 		<p>
 			A simple example of how to use the Tutorial library.
@@ -17,12 +17,18 @@
 		<p>
 			How well do you know simple addition?
 		</p>
+		<div class="text-center">
+			<button class="button begin large">Begin</button>
+		</div>
 	</div>
 	
-	<div class="row columns">
-		<h2 class="tutorial-section-title"></h2>
-		<h3 class="prompt text-center"></h3>
-		<input type="text" class="answer">
+	<div class="row columns tutorial-content display-none">
+		<h2 class="section-title"></h2>
+		<div class="text-center">
+			<h3 class="prompt"></h3>
+			<input type="text" class="answer text-center">
+			<button class="button check-answer">Check Answer</button>
+		</div>
 	</div>
 	
 	<script src="js/jquery.min.js"></script>

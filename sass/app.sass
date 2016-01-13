@@ -26,12 +26,9 @@ body, h1, h2, h3, h4, h5, h6
 	background-color: $bg-color-dark
 	color: $fg-color-light
 
-[type=text], [type=password], [type=date], [type=datetime], [type=datetime-local], [type=month], [type=week], [type=email], [type=number], [type=search], [type=tel], [type=time], [type=url], [type=color], textarea
+[type=text], [type=password], [type=date], [type=datetime], [type=datetime-local], [type=month], [type=week], [type=email], [type=number], [type=search], [type=tel], [type=time], [type=url], [type=color], textarea, [type=text]:focus, [type=password]:focus, [type=date]:focus, [type=datetime]:focus, [type=datetime-local]:focus, [type=month]:focus, [type=week]:focus, [type=email]:focus, [type=number]:focus, [type=search]:focus, [type=tel]:focus, [type=time]:focus, [type=url]:focus, [type=color]:focus, textarea
 	background-color: $bg-color-dark
 	color: $fg-color-light
-
-[type=text]:focus, [type=password]:focus, [type=date]:focus, [type=datetime]:focus, [type=datetime-local]:focus, [type=month]:focus, [type=week]:focus, [type=email]:focus, [type=number]:focus, [type=search]:focus, [type=tel]:focus, [type=time]:focus, [type=url]:focus, [type=color]:focus, textarea
-	color: $bg-color-dark
 	
 
 /* Spacing
@@ -47,3 +44,16 @@ ul, ol
 	margin-left: $medium-spacing
 	margin-top: 0
 
+
+/* General
+.display-none
+	display: none
+
+
+/* Tutorial
+.prompt
+	padding-top: 0
+
+.prompt, .answer
+	font-size: $large-spacing
+	height: auto

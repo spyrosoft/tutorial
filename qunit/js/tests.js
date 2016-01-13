@@ -65,3 +65,24 @@ QUnit.test(
 		assert.ok( ! firstSection.checkProblem( '1+2', '1' ) );
 	}
 );
+
+
+QUnit.test(
+	'Verify number of remaining problems.',
+	function( assert ) {
+		var newTutorial = new Tutorial();
+		
+		var firstSectionIdentifier = 'first';
+		var firstSectionTitle = 'First Section';
+		var firstSectionIntro = 'First section intro.';
+		newTutorial.addSection( firstSectionIdentifier, firstSectionTitle, firstSectionIntro );
+		
+		var firstSection = newTutorial.getSection( firstSectionIdentifier );
+		firstSection.addProblem( '1+1', '1 + 1', '2' );
+		firstSection.addProblem( '1+2', '1 + 2', '3' );
+		firstSection.addProblem( '1+3', '1 + 3', '4' );
+		
+		firstSection.nextProblem();
+		assert.ok( firstSection.remainingProblems().length === 2 );
+	}
+);
