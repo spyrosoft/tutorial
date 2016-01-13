@@ -1,13 +1,13 @@
 var Tutorial = function() {
 	var sections = new Object();
 	
-	var Section = function( new_title, new_intro ) {
-		var title = new_title;
-		var intro = new_intro;
+	var Section = function( newTitle, newIntro ) {
+		var title = newTitle;
+		var intro = newIntro;
 		var retries = 3;
-		var correct_problems = new Array();
-		var incorrect_problems = new Array();
-		var problems = new Array();
+		var correctProblems = new Array();
+		var incorrectProblems = new Array();
+		var remainingProblems = new Array();
 		
 		//TODO: Try moving the bigger functions elsewhere to avoid clutter
 		return {
@@ -17,60 +17,67 @@ var Tutorial = function() {
 			'intro' : function() {
 				return intro;
 			},
+			'remainingProblems' : function() {
+				return remainingProblems;
+			},
 			'correctProblems' : function() {
-				return correct_problems;
+				return correctProblems;
 			},
 			'incorrectProblems' : function() {
-				return incorrect_problems;
+				return incorrectProblems;
 			},
-			'addProblem' : function( identifier, prompt, answer_or_answers, explanation ) {
-				var newProblem = new Problem( prompt, answer_or_answers, explanation );
-				problems[ identifier ] = newProblem;
+			'addProblem' : function( identifier, prompt, answerOrAnswers, explanation ) {
+				var newProblem = new Problem( prompt, answerOrAnswers, explanation );
+				remainingProblems[ identifier ] = newProblem;
 			},
-			'addProblemAnswer' : function( identifier, new_answer ) {
-				if ( problems[ identifier ] instanceof Array ) {
-					problems[ identifier ].push( new_answer );
+			'addProblemAnswer' : function( identifier, newAnswer ) {
+				if ( remainingProblems[ identifier ] instanceof Array ) {
+					remainingProblems[ identifier ].push( newAnswer );
 				} else {
-					var current_answer = problems[ identifier ];
-					problems[ identifier ] = new Array();
-					problems[ identifier ].push( current_answer );
-					problems[ identifier ].push( new_answer );
+					var currentAnswer = remainingProblems[ identifier ];
+					remainingProblems[ identifier ] = new Array();
+					remainingProblems[ identifier ].push( currentAnswer );
+					remainingProblems[ identifier ].push( newAnswer );
 				}
 			},
+			'nextProblem' : function() {
+				if ( remainingProblems.length === 0 ) { return null; }
+				next
+			},
 			'checkProblem' : function( identifier, answer ) {
-				var current_problem = problems[ identifier ];
-				if ( current_problem.answerOrAnswers() instanceof Array ) {
-					var problem_correct = false;
-					current_problem.answerOrAnswers().forEach(
-						function( current_problem_answer ) {
-							if ( current_problem_answer === answer ) {
-								problem_correct = true;
+				var currentProblem = remainingProblems[ identifier ];
+				if ( currentProblem.answerOrAnswers() instanceof Array ) {
+					var problemCorrect = false;
+					currentProblem.answerOrAnswers().forEach(
+						function( currentProblemAnswer ) {
+							if ( currentProblemAnswer === answer ) {
+								problemCorrect = true;
 							}
 						}
 					);
-					return problem_correct;
+					return problemCorrect;
 				} else {
-					return current_problem.answerOrAnswers() === answer;
+					return currentProblem.answerOrAnswers() === answer;
 				}
 				return false;
 			},
-			'setTimesToRetryProblems' : function( new_retries ) {
-				retries = new_retries;
+			'setTimesToRetryProblems' : function( newRetries ) {
+				retries = newRetries;
 			}
 		};
 	};
 	
-	var Problem = function( new_prompt, new_answer_or_answers, new_explanation ) {
-		var prompt = new_prompt;
-		var answer_or_answers = new_answer_or_answers;
-		var explanation = new_explanation;
+	var Problem = function( newPrompt, newAnswerOrAnswers, newExplanation ) {
+		var prompt = newPrompt;
+		var answerOrAnswers = newAnswerOrAnswers;
+		var explanation = newExplanation;
 		
 		return {
 			'prompt' : function() {
 				return prompt;
 			},
 			'answerOrAnswers' : function() {
-				return answer_or_answers;
+				return answerOrAnswers;
 			},
 			'explanation' : function() {
 				return explanation;
