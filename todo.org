@@ -1,0 +1,10 @@
+* Minimally Viable
+** User can choose between random problems, only missed problems, or only new problems
+*** This state applies to either each individual section or the overall tutorial
+
+* Reaching for the Stars
+** Add option to use weighted random numbers tending towards most recent problems
+** Import and export which allows for saving the tutorial state exactly as it is
+** Delete problem
+
+* Done
