@@ -6,7 +6,7 @@ var simpleAdditionData = [
 	{
 		'identifier' : 'ones',
 		'title' : 'Ones',
-		'intro' : 'Practice adding one to other numbers such as two, or five.',
+		'intro' : 'Practice adding one together with other numbers such as two and five.',
 		'problems' : [
 			{
 				'identifier' : '1+1',
@@ -61,6 +61,18 @@ function addProblemsToSection( section, problems ) {
 	}
 }
 
+var wordsOfEncouragement = ['Excellent', 'Correct', 'Superb', 'Fantastic', 'Marvelous', 'Admirable', 'Ace', 'First-class', 'Dandy', 'Exquisite', 'Fantastic', 'Golden', 'Marvellous', 'Outstanding', 'Splendid', 'Magnificent', 'Smashing', 'Terrific', 'Topnotch', 'Tremendous', 'Wonderful', 'Champion', 'First-rate', 'Brilliant', 'Fabulous', 'Stunning', 'Commendable', 'Huzzah'];
+var wordsOfEncouragementIndex = 0;
+
+function nextWordOfEncouragement() {
+	if ( wordsOfEncouragementIndex === wordsOfEncouragement.length ) {
+		wordsOfEncouragementIndex = 0;
+	}
+	var wordOfEncouragement = wordsOfEncouragement[ wordsOfEncouragementIndex ];
+	wordsOfEncouragementIndex++;
+	return wordOfEncouragement;
+}
+
 
 
 $( 'button.begin' ).on( 'click', begin );
@@ -82,27 +94,30 @@ var currentSection;
 function loadSection( sectionIdentifier ) {
 	currentSection = simpleAdditionTutorial.getSection( sectionIdentifier );
 	$( '.section-title' ).html( currentSection.title() );
+	$( '.message' ).html( currentSection.intro() );
 }
 
 loadSection( simpleAdditionData[ 0 ][ 'identifier' ] );
 
+function clearMessage() {
+	$( '.message' ).html( '' );
+}
+
 
 // Load the next problem into the UI
-var currentProblem;
-
 function nextProblem() {
-	currentProblem = currentSection.nextProblem();
 	loadCurrentProblem();
 }
 
 function loadCurrentProblem() {
-	$( '.prompt' ).html( currentProblem.prompt() );
+	$( '.prompt' ).html( currentSection.currentProblem().prompt() );
 }
 
 nextProblem();
 
 
 
+$( 'input.answer' ).on( 'keydown', clearMessage );
 $( 'input.answer' ).on( 'keydown', checkAnswerOnEnter );
 
 function checkAnswerOnEnter( keyEvent ) {
@@ -113,11 +128,21 @@ function checkAnswerOnEnter( keyEvent ) {
 
 function checkAnswer() {
 	var currentAnswer = $( '.answer' ).val();
+	$( '.answer' ).val( '' );
 	if ( currentSection.checkAnswer( currentProblem[ 'identifier' ], currentAnswer ) ) {
-		console.log('yes')
+		correctAnswer();
 	} else {
-		console.log('no')
+		incorrectAnswer();
 	}
+}
+
+function correctAnswer() {
+	$( '.message' ).html( nextWordOfEncouragement() );
+	nextProblem();
+}
+
+function incorrectAnswer() {
+	$( '.message' ).html( currentProblem.explanation() );
 }
 
 
