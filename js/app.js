@@ -61,8 +61,12 @@ var simpleAdditionData = [
 	}
 ];
 
+// As many instances of Tutorial can be made per page as you would like
+// Assign each to a different variable
+// In this demo this is the only one
 var simpleAdditionTutorial = new Tutorial();
 
+// An example technique for adding sections and problems in bulk from the data structure above:
 for ( var sectionIndex in simpleAdditionData ) {
 	var section = simpleAdditionTutorial.addSection(
 		simpleAdditionData[ sectionIndex ].identifier,
@@ -88,20 +92,10 @@ function addProblemsToSection( section, problems ) {
 	}
 }
 
-var wordsOfEncouragement = ['Excellent', 'Correct', 'Superb', 'Fantastic', 'Marvelous', 'Admirable', 'Ace', 'First-class', 'Dandy', 'Exquisite', 'Fantastic', 'Golden', 'Marvellous', 'Outstanding', 'Splendid', 'Magnificent', 'Smashing', 'Terrific', 'Topnotch', 'Tremendous', 'Wonderful', 'Champion', 'First-rate', 'Brilliant', 'Fabulous', 'Stunning', 'Commendable', 'Huzzah'];
-var wordsOfEncouragementIndex = 0;
-
-function nextWordOfEncouragement() {
-	if ( wordsOfEncouragementIndex === wordsOfEncouragement.length ) {
-		wordsOfEncouragementIndex = 0;
-	}
-	var wordOfEncouragement = wordsOfEncouragement[ wordsOfEncouragementIndex ];
-	wordsOfEncouragementIndex++;
-	return wordOfEncouragement;
-}
 
 
-
+// I like to have instructions appear before the tutorial starts
+// If you would like the tutorial to begin immediately, this is not needed
 $( 'button.begin' ).on( 'click', begin );
 
 function begin() {
@@ -110,8 +104,11 @@ function begin() {
 	$( '.answer' ).focus();
 }
 
-//TODO: Remove me when finished:
-begin();
+// Visit your URL and add #debug to the end for easier development
+if ( window.location.hash.match( /debug/ ) ) {
+	begin();
+}
+
 
 
 var currentSection;
@@ -195,4 +192,17 @@ function incorrectAnswer() {
 	var explanation = currentSection.getCurrentProblem().explanation();
 	if ( explanation ) { message( explanation ); }
 	else { message( 'Try again.' ); }
+}
+
+// Release some endorphins for the user when they answer problems correctly:
+var wordsOfEncouragement = ['Excellent', 'Correct', 'Superb', 'Fantastic', 'Marvelous', 'Admirable', 'Ace', 'First-class', 'Dandy', 'Exquisite', 'Fantastic', 'Golden', 'Marvellous', 'Outstanding', 'Splendid', 'Magnificent', 'Smashing', 'Terrific', 'Topnotch', 'Tremendous', 'Wonderful', 'Champion', 'First-rate', 'Brilliant', 'Fabulous', 'Stunning', 'Commendable', 'Huzzah'];
+var wordsOfEncouragementIndex = 0;
+
+function nextWordOfEncouragement() {
+	if ( wordsOfEncouragementIndex === wordsOfEncouragement.length ) {
+		wordsOfEncouragementIndex = 0;
+	}
+	var wordOfEncouragement = wordsOfEncouragement[ wordsOfEncouragementIndex ];
+	wordsOfEncouragementIndex++;
+	return wordOfEncouragement;
 }
