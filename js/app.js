@@ -80,12 +80,11 @@ $( 'button.begin' ).on( 'click', begin );
 function begin() {
 	$( '.tutorial-intro' ).addClass( 'display-none' );
 	$( '.tutorial-content' ).removeClass( 'display-none' );
+	$( '.answer' ).focus();
 }
 
 //TODO: Remove me when finished:
 begin();
-
-$( '.answer' ).focus();
 
 
 // Load the current section in the UI
@@ -105,15 +104,11 @@ function clearMessage() {
 
 
 // Load the next problem into the UI
-function nextProblem() {
-	loadCurrentProblem();
-}
-
 function loadCurrentProblem() {
-	$( '.prompt' ).html( currentSection.currentProblem().prompt() );
+	$( '.prompt' ).html( currentSection.getCurrentProblem().prompt() );
 }
 
-nextProblem();
+loadCurrentProblem();
 
 
 
@@ -121,7 +116,7 @@ $( 'input.answer' ).on( 'keydown', clearMessage );
 $( 'input.answer' ).on( 'keydown', checkAnswerOnEnter );
 
 function checkAnswerOnEnter( keyEvent ) {
-	if ( checkForEnter( keyEvent ) ) {
+	if ( Utilities.isEnter( keyEvent ) ) {
 		checkAnswer();
 	}
 }
@@ -129,7 +124,7 @@ function checkAnswerOnEnter( keyEvent ) {
 function checkAnswer() {
 	var currentAnswer = $( '.answer' ).val();
 	$( '.answer' ).val( '' );
-	if ( currentSection.checkAnswer( currentProblem[ 'identifier' ], currentAnswer ) ) {
+	if ( currentSection.checkAnswer() ) {
 		correctAnswer();
 	} else {
 		incorrectAnswer();
@@ -138,15 +133,8 @@ function checkAnswer() {
 
 function correctAnswer() {
 	$( '.message' ).html( nextWordOfEncouragement() );
-	nextProblem();
 }
 
 function incorrectAnswer() {
-	$( '.message' ).html( currentProblem.explanation() );
-}
-
-
-/* --------------------Utilities-------------------- */
-function checkForEnter( keyEvent ) {
-	return keyEvent.keyCode === 13;
+	$( '.message' ).html( currentSection.getCurrentProblem().explanation() );
 }
