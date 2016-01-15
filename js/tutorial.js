@@ -47,6 +47,12 @@ var Tutorial = function() {
 			if ( problemSet === null ) { setCurrentProblem( null, null ); return; }
 			var problemIndex = getRandomProblemIndex( problemSet );
 			var problemIdentifier = problemSets[ problemSet ][ problemIndex ];
+			console.log( currentProblem, previousProblem )
+			console.log( problemSets[ 'remaining' ], problemSets[ 'retries' ] )
+			if ( problemIdentifier === previousProblem ) {
+				nextProblemRandom();
+				return;
+			}
 			setCurrentProblem( problemIdentifier, problemSet );
 			problemSets[ problemSet ].splice( problemIndex, 1 );
 		};
@@ -54,7 +60,13 @@ var Tutorial = function() {
 		// For the random nextProblemType, choose appropriately between the remaining or incorrect problem sets
 		var remainingOrIncorrectProblemSet = function() {
 			if ( problemSets[ 'remaining' ].length === 0 && problemSets[ 'incorrect' ].length === 0 ) { return null; }
-			else if ( problemSets[ 'remaining' ].length === 0 ) { return 'incorrect'; }
+			else if ( problemSets[ 'remaining' ].length === 0 ) {
+				//TODO: Add a unit test for this
+				if ( ! uniqueProblemsExistInSet( problemSet ) ) {
+					clearAllButTheFirstProblem( problemSet );
+				}
+				return 'incorrect';
+			}
 			else if ( problemSets[ 'incorrect' ].length === 0 ) { return 'remaining'; }
 			
 			var totalAvailableProblems = problemSets[ 'remaining' ].length + problemSets[ 'incorrect' ].length;
@@ -74,15 +86,12 @@ var Tutorial = function() {
 		
 		var getRandomProblemIndex = function( problemSet ) {
 			if ( problemSets[ problemSet ].length === 0 ) { return null; }
-			if ( ! uniqueProblemsExistInSet( problemSet ) ) { return 0; }
 			var problemIndex = Math.floor( Math.random() * problemSets[ problemSet ].length );
-			if ( problemSets[ problemSet ][ problemIndex ] === previousProblem ) {
-				return getRandomProblemIndex( problemSet );
-			}
 			return problemIndex;
 		};
 		
 		var uniqueProblemsExistInSet = function( problemSet ) {
+			if ( problemSets[ problemSet ].length == 1 ) { return true; }
 			var uniqueProblemExists = false;
 			var firstProblem = problemSets[ problemSet ][ 0 ];
 			var secondProblem;
@@ -97,6 +106,12 @@ var Tutorial = function() {
 			return uniqueProblemExists;
 		};
 		
+		var clearAllButTheFirstProblem = function( problemSet ) {
+			var firstProblem = problemSets[ problemSet ][ 0 ];
+			problemSets[ problemSet ] = new Array();
+			problemSets[ problemSet ].push( firstProblem );
+		};
+		
 		var getProblemByIndex = function( problemSet, problemIndex ) {
 			var problemIdentifier = problemSets[ problemSet ][ problemIndex ];
 			var newProblem = problems[ problemIdentifier ];
@@ -109,6 +124,9 @@ var Tutorial = function() {
 			currentProblem = identifier;
 			currentProblemSet = problemSet;
 		};
+		
+		//TODO: Delete this when finished
+		var tunnel = function() { return this; };
 		
 		
 		//TODO: Split up the bigger functions
@@ -181,13 +199,13 @@ var Tutorial = function() {
 				}
 				if ( problemCorrect ) {
 					problemSets[ 'correct' ].push( currentProblem );
+					setCurrentProblem( undefined, undefined );
 				} else {
 					problemSets[ 'incorrect' ].push( currentProblem );
 					for ( var i = 0; i < retries; i++ ) {
 						problemSets[ 'retries' ].push( currentProblem );
 					}
 				}
-				currentProblem = undefined;
 				return problemCorrect;
 			},
 			
