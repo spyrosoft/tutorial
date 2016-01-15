@@ -31,6 +31,33 @@ var simpleAdditionData = [
 				'answerOrAnswers' : '5'
 			}
 		]
+	},
+	{
+		'identifier' : 'twos',
+		'title' : 'Twos',
+		'intro' : 'Practice adding two together with other numbers.',
+		'problems' : [
+			{
+				'identifier' : '2+1',
+				'prompt' : '2 + 1',
+				'answerOrAnswers' : '3'
+			},
+			{
+				'identifier' : '2+2',
+				'prompt' : '2 + 2',
+				'answerOrAnswers' : '4'
+			},
+			{
+				'identifier' : '2+3',
+				'prompt' : '2 + 3',
+				'answerOrAnswers' : '5'
+			},
+			{
+				'identifier' : '2+4',
+				'prompt' : '2 + 4',
+				'answerOrAnswers' : '6'
+			}
+		]
 	}
 ];
 
@@ -87,44 +114,72 @@ function begin() {
 begin();
 
 
-// Load the current section in the UI
 var currentSection;
+var currentSectionIndex = 0;
 
 function loadSection( sectionIdentifier ) {
+	var sectionExists = false;
+	for ( var sectionIndex in simpleAdditionData ) {
+		if ( simpleAdditionData[ sectionIndex ][ 'identifier' ] === sectionIdentifier ) {
+			sectionExists = true;
+			currentSectionIndex = sectionIndex;
+			break;
+		}
+	}
+	if ( ! sectionExists ) { throw "The requested section: " + sectionIdentifier + " does not exist."; }
 	currentSection = simpleAdditionTutorial.getSection( sectionIdentifier );
 	$( '.section-title' ).html( currentSection.title() );
-	$( '.message' ).html( currentSection.intro() );
+	message( currentSection.intro() );
+	loadCurrentProblem();
 }
 
-loadSection( simpleAdditionData[ 0 ][ 'identifier' ] );
+function loadCurrentSection() {
+	if ( currentSectionIndex >= simpleAdditionData.length ) {
+		message( 'The tutorial is complete!' );
+		return;
+	}
+	loadSection( simpleAdditionData[ currentSectionIndex ][ 'identifier' ] );
+}
+
+function loadNextSection() {
+	currentSectionIndex++;
+	loadCurrentSection();
+}
+
+loadCurrentSection();
+
+
+function message( message ) {
+	$( '.message' ).html( message );
+}
 
 function clearMessage() {
-	$( '.message' ).html( '' );
+	message( '&nbsp;' );
 }
 
-
-// Load the next problem into the UI
 function loadCurrentProblem() {
-	$( '.prompt' ).html( currentSection.getCurrentProblem().prompt() );
+	var currentProblem = currentSection.getCurrentProblem();
+	if ( currentProblem !== null ) {
+		$( '.prompt' ).html( currentProblem.prompt() );
+	} else {
+		loadNextSection();
+	}
 }
-
-loadCurrentProblem();
 
 
 
 $( 'input.answer' ).on( 'keydown', clearMessage );
 $( 'input.answer' ).on( 'keydown', checkAnswerOnEnter );
+$( 'button.check-answer' ).on( 'click', checkAnswer );
 
 function checkAnswerOnEnter( keyEvent ) {
-	if ( Utilities.isEnter( keyEvent ) ) {
-		checkAnswer();
-	}
+	if ( Utilities.isEnter( keyEvent ) ) { checkAnswer(); }
 }
 
 function checkAnswer() {
 	var currentAnswer = $( '.answer' ).val();
 	$( '.answer' ).val( '' );
-	if ( currentSection.checkAnswer() ) {
+	if ( currentSection.checkAnswer( currentAnswer ) ) {
 		correctAnswer();
 	} else {
 		incorrectAnswer();
@@ -133,8 +188,11 @@ function checkAnswer() {
 
 function correctAnswer() {
 	$( '.message' ).html( nextWordOfEncouragement() );
+	loadCurrentProblem();
 }
 
 function incorrectAnswer() {
-	$( '.message' ).html( currentSection.getCurrentProblem().explanation() );
+	var explanation = currentSection.getCurrentProblem().explanation();
+	if ( explanation ) { message( explanation ); }
+	else { message( 'Try again.' ); }
 }
