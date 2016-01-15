@@ -21,12 +21,14 @@ var Tutorial = function() {
 		var currentProblem;
 		var previousProblem;
 		
-		// Needed when problemType is 'random'; the value may either be remaining or incorrect in this case
+		// Needed when nextProblemType is 'random'; the value may either be remaining or incorrect in this case
 		var currentProblemSet;
 		
-		var problemType = 'random';
+		var nextProblemType = 'random';
 		
-		// Used to locate and set the next problem for a given problemType
+		var remainingProblemsSelectionMethod = 'random';
+		
+		// Used to locate and set the next problem for a given nextProblemType
 		var nextProblemLookupByType = {
 			'random' : function() { nextProblemRandom(); },
 			'remaining' : function() { nextProblemByType( 'remaining' ); },
@@ -36,20 +38,20 @@ var Tutorial = function() {
 		
 		// All types but random; the others are straight forward
 		var nextProblemByType = function( problemSet ) {
-			setRandomCurrentProblemFromSet( problemSet );
+			setCurrentProblemFromSet( problemSet );
 			currentProblemSet = problemSet;
 		};
 		
 		var nextProblemRandom = function() {
 			var problemSet = remainingOrIncorrectProblemSet();
-			if ( problemSet === null ) { setCurrentProblem( null ); return; }
+			if ( problemSet === null ) { setCurrentProblem( null, null ); return; }
 			var problemIndex = getRandomProblemIndex( problemSet );
-			problemSet.splice( problemIndex, 1 );
-			var problemIdentifier = problemSet[ problemIdentifier ];
-			setCurrentProblem( problemIdentifier );
+			var problemIdentifier = problemSets[ problemSet ][ problemIndex ];
+			setCurrentProblem( problemIdentifier, problemSet );
+			problemSets[ problemSet ].splice( problemIndex, 1 );
 		};
 		
-		// For the random problemType, choose appropriately between the remaining or incorrect problem sets
+		// For the random nextProblemType, choose appropriately between the remaining or incorrect problem sets
 		var remainingOrIncorrectProblemSet = function() {
 			if ( problemSets[ 'remaining' ].length === 0 && problemSets[ 'incorrect' ].length === 0 ) { return null; }
 			else if ( problemSets[ 'remaining' ].length === 0 ) { return 'incorrect'; }
@@ -65,30 +67,16 @@ var Tutorial = function() {
 			return problemSet;
 		};
 		
-		var setRandomCurrentProblemFromSet = function( problemSet ) {
+		var setCurrentProblemFromSet = function( problemSet ) {
 			var problemIndex = getRandomProblemIndex( problemSet );
-			setCurrentProblem( problemSet[ problemIndex ] );
-		};
-		
-		var nextProblemRemaining = function() {
-			
-		};
-		
-		var nextProblemIncorrect = function() {
-			
-		};
-		
-		var nextProblemCorrect = function() {
-			
+			setCurrentProblem( problemSets[ problemSet ][ problemIndex ], problemSet );
 		};
 		
 		var getRandomProblemIndex = function( problemSet ) {
-			if ( problemSet.length === 0 ) { return null; }
-			if ( ! uniqueProblemsExistInSet( problemSet ) ) {
-				return 0;
-			}
-			var problemIndex = Math.floor( Math.random() * problemSet.length );
-			if ( problemSet[ problemIndex ] === previousProblem ) {
+			if ( problemSets[ problemSet ].length === 0 ) { return null; }
+			if ( ! uniqueProblemsExistInSet( problemSet ) ) { return 0; }
+			var problemIndex = Math.floor( Math.random() * problemSets[ problemSet ].length );
+			if ( problemSets[ problemSet ][ problemIndex ] === previousProblem ) {
 				return getRandomProblemIndex( problemSet );
 			}
 			return problemIndex;
@@ -96,10 +84,10 @@ var Tutorial = function() {
 		
 		var uniqueProblemsExistInSet = function( problemSet ) {
 			var uniqueProblemExists = false;
-			var firstProblem = problemSet[ 0 ];
+			var firstProblem = problemSets[ problemSet ][ 0 ];
 			var secondProblem;
-			for ( var i = 1; i < problemSet.length; i++ ) {
-				secondProblem = problemSet[ i ];
+			for ( var i = 1; i < problemSets[ problemSet ].length; i++ ) {
+				secondProblem = problemSets[ problemSet ][ i ];
 				if ( secondProblem != firstProblem ) {
 					uniqueProblemExists = true;
 					break;
@@ -110,7 +98,7 @@ var Tutorial = function() {
 		};
 		
 		var getProblemByIndex = function( problemSet, problemIndex ) {
-			var problemIdentifier = problemSet[ problemIndex ];
+			var problemIdentifier = problemSets[ problemSet ][ problemIndex ];
 			var newProblem = problems[ problemIdentifier ];
 			newProblem[ 'identifier' ] = problemIdentifier;
 			return newProblem;
@@ -119,10 +107,11 @@ var Tutorial = function() {
 		var setCurrentProblem = function( identifier, problemSet ) {
 			previousProblem = currentProblem;
 			currentProblem = identifier;
+			currentProblemSet = problemSet;
 		};
 		
 		
-		//TODO: Try moving the bigger functions elsewhere to avoid clutter
+		//TODO: Split up the bigger functions
 		return {
 			// Access the read-only closed variables
 			'title' : function() { return title; },
@@ -152,37 +141,35 @@ var Tutorial = function() {
 				}
 			},
 			
-			'nextProblem' : function() {
+			'markProblemCorrect' : function() {
 				
 			},
 			
-			'randomProblemRemaining' : function() {
+			'markProblemIncorrect' : function() {
 				
 			},
 			
-			'randomProblemIncorrect' : function() {
+			'randomProblemByType' : function( problemSet ) {
 				
 			},
 			
-			'randomProblemCorrect' : function() {
+			'sequentialProblemByType' : function( problemSet ) {
 				
 			},
 			
-			'currentProblem' : function() {
-				if ( currentProblem === undefined ) { nextProblemLookupByType[ problemType ](); }
+			'getCurrentProblem' : function() {
+				if ( currentProblem === undefined ) { nextProblemLookupByType[ nextProblemType ](); }
 				if ( currentProblem === null ) { return null; }
-				nextProblemLookupByType[ problemType ]();
 				var identifiedCurrentProblem = problems[ currentProblem ];
-				console.log(problems[currentProblem], currentProblem)
 				identifiedCurrentProblem[ 'identifier' ] = currentProblem;
 				return identifiedCurrentProblem;
 			},
 			
-			'checkAnswer' : function( identifier, answer ) {
-				var problem = problems[ identifier ];
+			'checkAnswer' : function( answer ) {
 				var problemCorrect = false;
-				if ( problem.answerOrAnswers() instanceof Array ) {
-					problem.answerOrAnswers().forEach(
+				if ( problems[ currentProblem ].answerOrAnswers() instanceof Array ) {
+					problems[ currentProblem ].answerOrAnswers().forEach(
+						//TODO: Convert this to deepEquals for complex answer structures like arrays or objects
 						function( problemAnswer ) {
 							if ( problemAnswer === answer ) {
 								problemCorrect = true;
@@ -190,16 +177,17 @@ var Tutorial = function() {
 						}
 					);
 				} else {
-					problemCorrect = problem.answerOrAnswers() === answer;
+					problemCorrect = problems[ currentProblem ].answerOrAnswers() === answer;
 				}
 				if ( problemCorrect ) {
-					problemSets[ 'correct' ].push( identifier );
+					problemSets[ 'correct' ].push( currentProblem );
 				} else {
-					problemSets[ 'incorrect' ].push( identifier );
+					problemSets[ 'incorrect' ].push( currentProblem );
 					for ( var i = 0; i < retries; i++ ) {
-						problemSets[ 'retries' ].push( identifier );
+						problemSets[ 'retries' ].push( currentProblem );
 					}
 				}
+				currentProblem = undefined;
 				return problemCorrect;
 			},
 			
@@ -211,11 +199,18 @@ var Tutorial = function() {
 				}
 			},
 			
-			'setProblemType' : function( newProblemType ) {
-				if ( ! nextProblemLookupByType[ newProblemType ] ) {
-					throw 'The problem type "' + newProblemType + '" is not one of the following: "random", "remaining", "incorrect", or "correct".';
+			'setProblemType' : function( newNextProblemType ) {
+				if ( ! nextProblemLookupByType[ newNextProblemType ] ) {
+					throw 'The problem type "' + newNextProblemType + '" is not one of the following: "random", "remaining", "incorrect", or "correct".';
 				}
-				problemType = newProblemType;
+				nextProblemType = newNextProblemType;
+			},
+
+			'setRemainingProblemsSelectionMethod' : function( newMethod ) {
+				if ( newMethod !== 'random' || newMethod !== 'sequential' ) {
+					throw 'Your remaining problem selection method "' + newMethod + '" needs to be either "random" or "sequential".';
+				}
+				remainingProblemsSelectionMethod = newMethod;
 			}
 		};
 	};
