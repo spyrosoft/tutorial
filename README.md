@@ -1,6 +1,6 @@
 # Installation
 
-This repository is a demonstration of the Tutorial library in action. To create your own, all you need is the tutorial.js file.
+This repository is a demonstration of the Tutorial library in action. To create your own, all you need is the /js/tutorial.js file.
 
 # Overview
 

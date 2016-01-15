@@ -1,4 +1,5 @@
 * Minimally Viable
+** Run a review at the end of each section if there were missed problems
 ** User can choose between random problems, only missed problems, or only new problems
 *** This state applies to either each individual section or the overall tutorial
 ** Add an option to run through new problems in order or randomly
