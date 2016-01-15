@@ -12,8 +12,8 @@ QUnit.test(
 	function( assert ) {
 		var newTutorial = new Tutorial();
 		
-		var firstSectionIdentifier = 'first';
-		var firstSectionTitle = 'First Section';
+		var firstSectionIdentifier = 'first-section-identifier';
+		var firstSectionTitle = 'First Section Title';
 		var firstSectionIntro = 'First section intro.';
 		var firstSection = newTutorial.addSection( firstSectionIdentifier, firstSectionTitle, firstSectionIntro );
 		
@@ -29,8 +29,8 @@ QUnit.test(
 	function( assert ) {
 		var newTutorial = new Tutorial();
 		
-		var firstSectionIdentifier = 'first';
-		var firstSectionTitle = 'First Section';
+		var firstSectionIdentifier = 'first-section-identifier';
+		var firstSectionTitle = 'First Section Title';
 		var firstSectionIntro = 'First section intro.';
 		newTutorial.addSection( firstSectionIdentifier, firstSectionTitle, firstSectionIntro );
 		
@@ -44,25 +44,37 @@ QUnit.test(
 
 
 QUnit.test(
-	'Add and check questions.',
+	'Correct and incorrect answers work.',
 	function( assert ) {
 		var newTutorial = new Tutorial();
 		
-		var firstSectionIdentifier = 'first';
-		var firstSectionTitle = 'First Section';
-		var firstSectionIntro = 'First section intro.';
-		newTutorial.addSection( firstSectionIdentifier, firstSectionTitle, firstSectionIntro );
-		
-		var firstSection = newTutorial.getSection( firstSectionIdentifier );
+		var firstSection = newTutorial.addSection( 'first-section-identifier', 'First Section Title', 'First section intro.' );
 		firstSection.addProblem( '1+1', '1 + 1', '2' );
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		
-		assert.ok( typeof firstSection.checkProblem( '1+1', '2' ) === 'boolean' );
-		assert.ok( firstSection.checkProblem( '1+1', '2' ) );
-		assert.ok( typeof firstSection.checkProblem( '1+2', '3' ) === 'boolean' );
-		assert.ok( firstSection.checkProblem( '1+2', '3' ) );
-		assert.ok( ! firstSection.checkProblem( '1+2', '4' ) );
-		assert.ok( ! firstSection.checkProblem( '1+2', '1' ) );
+		var firstQuestion = firstSection.getCurrentProblem();
+		assert.ok( typeof firstSection.checkAnswer( firstQuestion.answerOrAnswers() ) === 'boolean' );
+		
+		var secondQuestion = firstSection.getCurrentProblem();
+		assert.ok( ! firstSection.checkAnswer( secondQuestion.answerOrAnswers() + 1 ) );
+	}
+);
+
+
+QUnit.test(
+	'A new/different problem is loaded when the first is answered correctly.',
+	function( assert ) {
+		var newTutorial = new Tutorial();
+		
+		var firstSection = newTutorial.addSection( 'first-section-identifier', 'First Section Title', 'First section intro.' );
+		firstSection.addProblem( '1+1', '1 + 1', '2' );
+		firstSection.addProblem( '1+2', '1 + 2', '3' );
+		
+		var firstQuestion = firstSection.getCurrentProblem();
+		firstSection.checkAnswer( firstQuestion.answerOrAnswers() );
+		
+		var secondQuestion = firstSection.getCurrentProblem();
+		assert.ok( firstQuestion[ 'identifier' ] !== secondQuestion[ 'identifier' ] );
 	}
 );
 
@@ -72,17 +84,53 @@ QUnit.test(
 	function( assert ) {
 		var newTutorial = new Tutorial();
 		
-		var firstSectionIdentifier = 'first';
-		var firstSectionTitle = 'First Section';
-		var firstSectionIntro = 'First section intro.';
-		newTutorial.addSection( firstSectionIdentifier, firstSectionTitle, firstSectionIntro );
-		
-		var firstSection = newTutorial.getSection( firstSectionIdentifier );
+		var firstSection = newTutorial.addSection( 'first-section-identifier', 'First Section Title', 'First section intro.' );
 		firstSection.addProblem( '1+1', '1 + 1', '2' );
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		firstSection.addProblem( '1+3', '1 + 3', '4' );
 		
-		firstSection.nextProblem();
-		assert.ok( firstSection.remainingProblems().length === 2 );
+		firstSection.getCurrentProblem();
+		assert.ok( firstSection.problemsRemaining().length === 2 );
+	}
+);
+
+
+QUnit.test(
+	'Verify number of correct problems.',
+	function( assert ) {
+		var newTutorial = new Tutorial();
+		
+		var firstSection = newTutorial.addSection( 'first-section-identifier', 'First Section Title', 'First section intro.' );
+		firstSection.addProblem( '1+1', '1 + 1', '2' );
+		firstSection.addProblem( '1+2', '1 + 2', '3' );
+		firstSection.addProblem( '1+3', '1 + 3', '4' );
+		
+		var currentProblem = firstSection.getCurrentProblem();
+		firstSection.checkAnswer( currentProblem.answerOrAnswers() );
+		
+		currentProblem = firstSection.getCurrentProblem();
+		firstSection.checkAnswer( currentProblem.answerOrAnswers() );
+		
+		assert.ok( firstSection.problemsCorrect().length === 2 );
+	}
+);
+
+
+QUnit.test(
+	'Problems retries increases by number of retries.',
+	function( assert ) {
+		var newTutorial = new Tutorial();
+		
+		var firstSection = newTutorial.addSection( 'first-section-identifier', 'First Section Title', 'First section intro.' );
+		firstSection.addProblem( '1+1', '1 + 1', '2' );
+		firstSection.addProblem( '1+2', '1 + 2', '3' );
+		firstSection.addProblem( '1+3', '1 + 3', '4' );
+		
+		firstSection.setTimesToRetryProblems( 3 );
+		
+		var currentProblem = firstSection.getCurrentProblem();
+		var incorrectAnswer = currentProblem.answerOrAnswers() + 1;
+		firstSection.checkAnswer( currentProblem[ 'identifier' ], incorrectAnswer );
+		assert.ok( firstSection.problemsRetries().length === 3 );
 	}
 );
