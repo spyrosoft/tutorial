@@ -41,4 +41,9 @@ ul, ol {
   font-size: 4rem;
   height: auto; }
 
+.message {
+  text-align: center;
+  font-size: 200%;
+  line-height: 120%; }
+
 /*# sourceMappingURL=app.css.map */
