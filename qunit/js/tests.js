@@ -34,7 +34,7 @@ QUnit.test(
 		var firstSectionIntro = 'First section intro.';
 		newTutorial.addSection( firstSectionIdentifier, firstSectionTitle, firstSectionIntro );
 		
-		var firstSection = newTutorial.getSection( firstSectionIdentifier );
+		var firstSection = newTutorial.setCurrentSection( firstSectionIdentifier );
 		
 		assert.ok( firstSection instanceof Object );
 		assert.ok( firstSection.title() === firstSectionTitle );
