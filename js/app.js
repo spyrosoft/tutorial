@@ -1,4 +1,6 @@
-$(document).foundation();
+$( document ).foundation();
+
+
 
 // I like to use objects for organizing data
 // It's easy to rearrange things, everything is in one place, and it's simple to swap out with data pulled from a server
@@ -61,10 +63,14 @@ var simpleAdditionData = [
 	}
 ];
 
+
+
 // As many instances of Tutorial can be made per page as you would like
 // Assign each to a different variable
 // In this demo this is the only one
 var simpleAdditionTutorial = new Tutorial();
+
+
 
 // An example technique for adding sections and problems in bulk from the data structure above:
 for ( var sectionIndex in simpleAdditionData ) {
@@ -94,6 +100,33 @@ function addProblemsToSection( section, problems ) {
 
 
 
+var currentSection = simpleAdditionTutorial.getCurrentSection();
+
+function loadSection( section ) {
+	$( '.section-title' ).html( section.title() );
+	message( section.intro() );
+}
+
+function loadCurrentProblem() {
+	var currentProblem = currentSection.getCurrentProblem();
+	if ( currentProblem === null ) {
+		loadNextSection();
+	} else {
+		$( '.prompt' ).html( currentProblem.prompt() );
+	}
+}
+
+function loadNextSection() {
+	currentSection = simpleAdditionTutorial.loadNextSection();
+	if ( currentSection === null ) {
+		message( 'The tutorial is complete!' );
+	} else {
+		loadCurrentProblem();
+	}
+}
+
+
+
 // I like to have instructions appear before the tutorial starts
 // If you would like the tutorial to begin immediately, this is not needed
 $( 'button.begin' ).on( 'click', begin );
@@ -102,6 +135,8 @@ function begin() {
 	$( '.tutorial-intro' ).addClass( 'display-none' );
 	$( '.tutorial-content' ).removeClass( 'display-none' );
 	$( '.answer' ).focus();
+	loadSection( currentSection );
+	loadCurrentProblem();
 }
 
 // Visit your URL and add #debug to the end for easier development
@@ -110,58 +145,6 @@ if ( window.location.hash.match( /debug/ ) ) {
 }
 
 
-
-var currentSection;
-var currentSectionIndex = 0;
-
-function loadSection( sectionIdentifier ) {
-	var sectionExists = false;
-	for ( var sectionIndex in simpleAdditionData ) {
-		if ( simpleAdditionData[ sectionIndex ][ 'identifier' ] === sectionIdentifier ) {
-			sectionExists = true;
-			currentSectionIndex = sectionIndex;
-			break;
-		}
-	}
-	if ( ! sectionExists ) { throw "The requested section: " + sectionIdentifier + " does not exist."; }
-	currentSection = simpleAdditionTutorial.getSection( sectionIdentifier );
-	$( '.section-title' ).html( currentSection.title() );
-	message( currentSection.intro() );
-	loadCurrentProblem();
-}
-
-function loadCurrentSection() {
-	if ( currentSectionIndex >= simpleAdditionData.length ) {
-		message( 'The tutorial is complete!' );
-		return;
-	}
-	loadSection( simpleAdditionData[ currentSectionIndex ][ 'identifier' ] );
-}
-
-function loadNextSection() {
-	currentSectionIndex++;
-	loadCurrentSection();
-}
-
-loadCurrentSection();
-
-
-function message( message ) {
-	$( '.message' ).html( message );
-}
-
-function clearMessage() {
-	message( '&nbsp;' );
-}
-
-function loadCurrentProblem() {
-	var currentProblem = currentSection.getCurrentProblem();
-	if ( currentProblem !== null ) {
-		$( '.prompt' ).html( currentProblem.prompt() );
-	} else {
-		loadNextSection();
-	}
-}
 
 
 
@@ -205,4 +188,13 @@ function nextWordOfEncouragement() {
 	var wordOfEncouragement = wordsOfEncouragement[ wordsOfEncouragementIndex ];
 	wordsOfEncouragementIndex++;
 	return wordOfEncouragement;
+}
+
+
+function message( message ) {
+	$( '.message' ).html( message );
+}
+
+function clearMessage() {
+	message( '&nbsp;' );
 }
