@@ -1,5 +1,12 @@
 var Tutorial = function() {
+	// Look up sections by identifier
 	var sections = new Object();
+	
+	// Look up section identifiers by index
+	var sectionIdentifiers = new Array();
+	
+	// Keep track of the current section index for looking up next or previous sections
+	var currentSectionIndex;
 	
 	var Section = function( newTitle, newIntro ) {
 		var title = newTitle;
@@ -43,7 +50,7 @@ var Tutorial = function() {
 		};
 		
 		var nextProblemRandom = function() {
-			var problemSet = remainingOrIncorrectProblemSet();
+			var problemSet = remainingOrRetriesProblemSet();
 			if ( problemSet === null ) { setCurrentProblem( null, null ); return; }
 			var problemIndex = getRandomProblemIndex( problemSet );
 			var problemIdentifier = problemSets[ problemSet ][ problemIndex ];
@@ -58,23 +65,23 @@ var Tutorial = function() {
 		};
 		
 		// For the random nextProblemType, choose appropriately between the remaining or incorrect problem sets
-		var remainingOrIncorrectProblemSet = function() {
-			if ( problemSets[ 'remaining' ].length === 0 && problemSets[ 'incorrect' ].length === 0 ) { return null; }
+		var remainingOrRetriesProblemSet = function() {
+			if ( problemSets[ 'remaining' ].length === 0 && problemSets[ 'retries' ].length === 0 ) { return null; }
 			else if ( problemSets[ 'remaining' ].length === 0 ) {
 				//TODO: Add a unit test for this
 				if ( ! uniqueProblemsExistInSet( problemSet ) ) {
 					clearAllButTheFirstProblem( problemSet );
 				}
-				return 'incorrect';
+				return 'retries';
 			}
-			else if ( problemSets[ 'incorrect' ].length === 0 ) { return 'remaining'; }
+			else if ( problemSets[ 'retries' ].length === 0 ) { return 'remaining'; }
 			
-			var totalAvailableProblems = problemSets[ 'remaining' ].length + problemSets[ 'incorrect' ].length;
+			var totalAvailableProblems = problemSets[ 'remaining' ].length + problemSets[ 'retries' ].length;
 			var randomIndex = Math.floor( Math.random() * totalAvailableProblems );
 			//TODO: Is this an off by one error? It pretty much doesn't matter here, just curious.
 			var problemSet = 'remaining';
-			if ( randomIndex < problemSets[ 'incorrect' ].length ) {
-				problemSet = 'incorrect';
+			if ( randomIndex < problemSets[ 'retries' ].length ) {
+				problemSet = 'retries';
 			}
 			return problemSet;
 		};
@@ -91,6 +98,7 @@ var Tutorial = function() {
 		};
 		
 		var uniqueProblemsExistInSet = function( problemSet ) {
+			console.log('unique', problemSet)
 			if ( problemSets[ problemSet ].length == 1 ) { return true; }
 			var uniqueProblemExists = false;
 			var firstProblem = problemSets[ problemSet ][ 0 ];
@@ -257,11 +265,39 @@ var Tutorial = function() {
 		addSection : function( identifier, title, intro ) {
 			var newSection = new Section( title, intro );
 			sections[ identifier ] = newSection;
+			sectionIdentifiers.push( identifier );
 			return newSection;
 		},
 		
-		getSection : function( identifier ) {
-			return sections[ identifier ];
+		setCurrentSection : function( identifier ) {
+			if ( typeof sections[ identifier ] === 'undefined' ) {
+				throw 'No section identified by "' + identifier + '" exists.';
+			}
+			var identifierIndex = 0;
+			for ( identifierIndex in sectionIdentifiers ) {
+				if ( sectionIdentifiers[ identifierIndex ] === identifier ) {
+					currentSectionIndex = identifierIndex;
+				}
+			}
+			return this.getCurrentSection();
+		},
+		
+		getCurrentSection : function() {
+			if ( typeof currentSectionIndex === 'undefined' ) {
+				if ( sectionIdentifiers.length === 0 ) {
+					throw "No sections have been created.";
+				}
+				currentSectionIndex = 0;
+			}
+			var identifiedCurrentSection = sections[ sectionIdentifiers[ currentSectionIndex ] ];
+			identifiedCurrentSection[ 'identifier' ] = sectionIdentifiers[ currentSectionIndex ];
+			return identifiedCurrentSection;
+		},
+		
+		loadNextSection : function() {
+			currentSectionIndex++;
+			if ( currentSectionIndex >= sectionIdentifiers.length ) { return null; }
+			return this.getCurrentSection();
 		}
 	};
 };
