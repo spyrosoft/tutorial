@@ -3,6 +3,8 @@
 ** User can choose between random problems, only missed problems, or only new problems
 *** This state applies to either each individual section or the overall tutorial
 ** Add an option to run through new problems in order or randomly
+** Add a problem progress meter - white: incomplete, green: correct, red: incorrect
+** Add a section navigation
 
 * Reaching for the Stars
 ** Add option to use weighted random numbers tending towards most recent problems
