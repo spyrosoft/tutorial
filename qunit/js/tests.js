@@ -53,10 +53,10 @@ QUnit.test(
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		
 		var firstQuestion = firstSection.getCurrentProblem();
-		assert.ok( typeof firstSection.checkAnswer( firstQuestion.answerOrAnswers() ) === 'boolean' );
+		assert.ok( typeof firstSection.checkAnswer( firstQuestion.answer() ) === 'boolean' );
 		
 		var secondQuestion = firstSection.getCurrentProblem();
-		assert.ok( ! firstSection.checkAnswer( secondQuestion.answerOrAnswers() + 1 ) );
+		assert.ok( ! firstSection.checkAnswer( secondQuestion.answer() + 1 ) );
 	}
 );
 
@@ -71,7 +71,7 @@ QUnit.test(
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		
 		var firstQuestion = firstSection.getCurrentProblem();
-		firstSection.checkAnswer( firstQuestion.answerOrAnswers() );
+		firstSection.checkAnswer( firstQuestion.answer() );
 		
 		var secondQuestion = firstSection.getCurrentProblem();
 		assert.ok( firstQuestion[ 'identifier' ] !== secondQuestion[ 'identifier' ] );
@@ -106,10 +106,10 @@ QUnit.test(
 		firstSection.addProblem( '1+3', '1 + 3', '4' );
 		
 		var currentProblem = firstSection.getCurrentProblem();
-		firstSection.checkAnswer( currentProblem.answerOrAnswers() );
+		firstSection.checkAnswer( currentProblem.answer() );
 		
 		currentProblem = firstSection.getCurrentProblem();
-		firstSection.checkAnswer( currentProblem.answerOrAnswers() );
+		firstSection.checkAnswer( currentProblem.answer() );
 		
 		assert.ok( firstSection.problemsCorrect().length === 2 );
 	}
@@ -129,7 +129,7 @@ QUnit.test(
 		firstSection.setTimesToRetryProblems( 3 );
 		
 		var currentProblem = firstSection.getCurrentProblem();
-		var incorrectAnswer = currentProblem.answerOrAnswers() + 1;
+		var incorrectAnswer = currentProblem.answer() + 1;
 		firstSection.checkAnswer( currentProblem[ 'identifier' ], incorrectAnswer );
 		assert.ok( firstSection.problemsRetries().length === 3 );
 	}

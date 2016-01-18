@@ -149,8 +149,8 @@ var Tutorial = function() {
 			'problemsRetries' : function() { return problemSets[ 'retries' ]; },
 			
 			// This may cause issues if the user wants to use an array as the value for a single answer - it will be treated as multiple answers
-			'addProblem' : function( identifier, prompt, answerOrAnswers, explanation ) {
-				var newProblem = new Problem( prompt, answerOrAnswers, explanation );
+			'addProblem' : function( identifier, prompt, answer, explanation ) {
+				var newProblem = new Problem( prompt, answer, explanation );
 				problems[ identifier ] = newProblem;
 				problemSets[ 'remaining' ].push( identifier );
 			},
@@ -193,8 +193,8 @@ var Tutorial = function() {
 			
 			'checkAnswer' : function( answer ) {
 				var problemCorrect = false;
-				if ( problems[ currentProblem ].answerOrAnswers() instanceof Array ) {
-					problems[ currentProblem ].answerOrAnswers().forEach(
+				if ( problems[ currentProblem ].answer() instanceof Array ) {
+					problems[ currentProblem ].answer().forEach(
 						//TODO: Convert this to deepEquals for complex answer structures like arrays or objects
 						function( problemAnswer ) {
 							if ( problemAnswer === answer ) {
@@ -203,7 +203,7 @@ var Tutorial = function() {
 						}
 					);
 				} else {
-					problemCorrect = problems[ currentProblem ].answerOrAnswers() === answer;
+					problemCorrect = problems[ currentProblem ].answer() === answer;
 				}
 				if ( problemCorrect ) {
 					problemSets[ 'correct' ].push( currentProblem );
@@ -241,9 +241,9 @@ var Tutorial = function() {
 		};
 	};
 	
-	var Problem = function( newPrompt, newAnswerOrAnswers, newExplanation ) {
+	var Problem = function( newPrompt, newAnswer, newExplanation ) {
 		var prompt = newPrompt;
-		var answerOrAnswers = newAnswerOrAnswers;
+		var answer = newAnswer;
 		var explanation = newExplanation;
 		
 		return {
@@ -251,8 +251,8 @@ var Tutorial = function() {
 				return prompt;
 			},
 			
-			'answerOrAnswers' : function() {
-				return answerOrAnswers;
+			'answer' : function() {
+				return answer;
 			},
 			
 			'explanation' : function() {

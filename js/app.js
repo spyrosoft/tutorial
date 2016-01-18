@@ -146,19 +146,13 @@ if ( window.location.hash.match( /debug/ ) ) {
 
 
 
-
-
 $( 'input.answer' ).on( 'keydown', clearMessage );
-$( 'input.answer' ).on( 'keydown', checkAnswerOnEnter );
-$( 'button.check-answer' ).on( 'click', checkAnswer );
-
-function checkAnswerOnEnter( keyEvent ) {
-	if ( Utilities.isEnter( keyEvent ) ) { checkAnswer(); }
-}
+$( 'input.answer' ).on( 'keydown', checkAnswer );
 
 function checkAnswer() {
 	var currentAnswer = $( '.answer' ).val();
-	$( '.answer' ).val( '' );
+	if ( currentAnswer === '' ) { return; }
+	var correctAnswer = currentSection.getCurrentProblem().answerOrAnswers()
 	if ( currentSection.checkAnswer( currentAnswer ) ) {
 		correctAnswer();
 	} else {
