@@ -13,24 +13,24 @@ var simpleAdditionData = [
 			{
 				'identifier' : '1+1',
 				'prompt' : '1 + 1',
-				'answerOrAnswers' : '2',
+				'answer' : '2',
 				// Problem explanations are optional
 				'explanation' : 'If you have an apple, and then another apple is given to you somehow, now you have two apples. Awesome.'
 			},
 			{
 				'identifier' : '1+2',
 				'prompt' : '1 + 2',
-				'answerOrAnswers' : '3'
+				'answer' : '3'
 			},
 			{
 				'identifier' : '1+3',
 				'prompt' : '1 + 3',
-				'answerOrAnswers' : '4'
+				'answer' : '4'
 			},
 			{
 				'identifier' : '1+4',
 				'prompt' : '1 + 4',
-				'answerOrAnswers' : '5'
+				'answer' : '5'
 			}
 		]
 	},
@@ -42,22 +42,22 @@ var simpleAdditionData = [
 			{
 				'identifier' : '2+1',
 				'prompt' : '2 + 1',
-				'answerOrAnswers' : '3'
+				'answer' : '3'
 			},
 			{
 				'identifier' : '2+2',
 				'prompt' : '2 + 2',
-				'answerOrAnswers' : '4'
+				'answer' : '4'
 			},
 			{
 				'identifier' : '2+3',
 				'prompt' : '2 + 3',
-				'answerOrAnswers' : '5'
+				'answer' : '5'
 			},
 			{
 				'identifier' : '2+4',
 				'prompt' : '2 + 4',
-				'answerOrAnswers' : '6'
+				'answer' : '6'
 			}
 		]
 	}
@@ -92,7 +92,7 @@ function addProblemsToSection( section, problems ) {
 		section.addProblem(
 			problems[ problemIndex ].identifier,
 			problems[ problemIndex ].prompt,
-			problems[ problemIndex ].answerOrAnswers,
+			problems[ problemIndex ].answer,
 			explanation
 		);
 	}
@@ -152,20 +152,20 @@ $( 'input.answer' ).on( 'keydown', checkAnswer );
 function checkAnswer() {
 	var currentAnswer = $( '.answer' ).val();
 	if ( currentAnswer === '' ) { return; }
-	var correctAnswer = currentSection.getCurrentProblem().answerOrAnswers()
+	var correctAnswer = currentSection.getCurrentProblem().answer();
 	if ( currentSection.checkAnswer( currentAnswer ) ) {
-		correctAnswer();
+		answerIsCorrect();
 	} else {
-		incorrectAnswer();
+		answerIsIncorrect();
 	}
 }
 
-function correctAnswer() {
+function answerIsCorrect() {
 	$( '.message' ).html( nextWordOfEncouragement() );
 	loadCurrentProblem();
 }
 
-function incorrectAnswer() {
+function answerIsIncorrect() {
 	var explanation = currentSection.getCurrentProblem().explanation();
 	if ( explanation ) { message( explanation ); }
 	else { message( 'Try again.' ); }

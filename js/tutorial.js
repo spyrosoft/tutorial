@@ -54,8 +54,6 @@ var Tutorial = function() {
 			if ( problemSet === null ) { setCurrentProblem( null, null ); return; }
 			var problemIndex = getRandomProblemIndex( problemSet );
 			var problemIdentifier = problemSets[ problemSet ][ problemIndex ];
-			console.log( currentProblem, previousProblem )
-			console.log( problemSets[ 'remaining' ], problemSets[ 'retries' ] )
 			if ( problemIdentifier === previousProblem ) {
 				nextProblemRandom();
 				return;
@@ -98,7 +96,6 @@ var Tutorial = function() {
 		};
 		
 		var uniqueProblemsExistInSet = function( problemSet ) {
-			console.log('unique', problemSet)
 			if ( problemSets[ problemSet ].length == 1 ) { return true; }
 			var uniqueProblemExists = false;
 			var firstProblem = problemSets[ problemSet ][ 0 ];
