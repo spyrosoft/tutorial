@@ -28,41 +28,41 @@ var Tutorial = function() {
 		var currentProblem;
 		var previousProblem;
 		
-		// Needed when nextProblemType is 'random'; the value may either be remaining or incorrect in this case
+		// Needed when nextProblemType is 'remainingOrIncorrect' to know which type the current problem is
 		var currentProblemSet;
 		
-		var nextProblemType = 'random';
+		var nextProblemType = 'remainingOrIncorrect';
 		
-		var remainingProblemsSelectionMethod = 'random';
+		var remainingProblemsSelectionMethod = 'remainingOrIncorrect';
 		
 		// Used to locate and set the next problem for a given nextProblemType
 		var nextProblemLookupByType = {
-			'random' : function() { nextProblemRandom(); },
+			'remainingOrIncorrect' : function() { nextProblemRemainingOrIncorrect(); },
 			'remaining' : function() { nextProblemByType( 'remaining' ); },
 			'incorrect' : function() { nextProblemByType( 'incorrect' ); },
 			'correct' : function() { nextProblemByType( 'correct' ); }
 		};
 		
-		// All types but random; the others are straight forward
+		// All types but remainingOrIncorrect; the others are straight forward
 		var nextProblemByType = function( problemSet ) {
 			setCurrentProblemFromSet( problemSet );
 			currentProblemSet = problemSet;
 		};
 		
-		var nextProblemRandom = function() {
+		var nextProblemRemainingOrIncorrect = function() {
 			var problemSet = remainingOrRetriesProblemSet();
 			if ( problemSet === null ) { setCurrentProblem( null, null ); return; }
 			var problemIndex = getRandomProblemIndex( problemSet );
 			var problemIdentifier = problemSets[ problemSet ][ problemIndex ];
 			if ( problemIdentifier === previousProblem ) {
-				nextProblemRandom();
+				nextProblemRemainingOrIncorrect();
 				return;
 			}
 			setCurrentProblem( problemIdentifier, problemSet );
 			problemSets[ problemSet ].splice( problemIndex, 1 );
 		};
 		
-		// For the random nextProblemType, choose appropriately between the remaining or incorrect problem sets
+		// For the remainingOrIncorrect nextProblemType, choose appropriately between the remaining or incorrect problem sets
 		var remainingOrRetriesProblemSet = function() {
 			if ( problemSets[ 'remaining' ].length === 0 && problemSets[ 'retries' ].length === 0 ) { return null; }
 			else if ( problemSets[ 'remaining' ].length === 0 ) {
@@ -224,11 +224,12 @@ var Tutorial = function() {
 			
 			'setProblemType' : function( newNextProblemType ) {
 				if ( ! nextProblemLookupByType[ newNextProblemType ] ) {
-					throw 'The problem type "' + newNextProblemType + '" is not one of the following: "random", "remaining", "incorrect", or "correct".';
+					throw 'The problem type "' + newNextProblemType + '" is not one of the following: "remainingOrIncorrect", "remaining", "incorrect", or "correct".';
 				}
 				nextProblemType = newNextProblemType;
 			},
 
+			//TODO: This needs to adapt to sequential or random problem choosing
 			'setRemainingProblemsSelectionMethod' : function( newMethod ) {
 				if ( newMethod !== 'random' || newMethod !== 'sequential' ) {
 					throw 'Your remaining problem selection method "' + newMethod + '" needs to be either "random" or "sequential".';
