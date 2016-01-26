@@ -12,6 +12,8 @@ var Tutorial = function() {
 		var title = newTitle;
 		var intro = newIntro;
 		var numberOfRetries = 3;
+		var reviewInterval = 2;
+		var mode = 'instruction';
 		
 		// Full problems which can be looked up by identifier
 		var problems = new Object();
@@ -28,14 +30,13 @@ var Tutorial = function() {
 		var currentProblem;
 		var previousProblem;
 		
-		// Needed when nextProblemType is 'remainingOrRetries' to know which type the current problem is
-		var currentProblemSet;
+		// Needed when nextProblemSetType is 'remainingOrRetries' to know which type the current problem is
+		var lastProblemSet;
+		var nextProblemSetType = 'remainingOrRetries';
 		
-		var nextProblemType = 'remainingOrRetries';
+		var randomOrSequential = 'sequential';
 		
-		var remainingProblemsSelectionMethod = 'remainingOrRetries';
-		
-		// Used to locate and set the next problem for a given nextProblemType
+		// Used to locate and set the next problem for a given nextProblemSetType
 		var nextProblemLookupByType = {
 			'remainingOrRetries' : function() { nextProblemRemainingOrIncorrect(); },
 			'remaining' : function() { nextProblemByType( 'remaining' ); },
@@ -46,7 +47,7 @@ var Tutorial = function() {
 		// All types but remainingOrRetries; the others are straight forward
 		var nextProblemByType = function( problemSet ) {
 			setCurrentProblemFromSet( problemSet );
-			currentProblemSet = problemSet;
+			lastProblemSet = problemSet;
 		};
 		
 		var nextProblemRemainingOrIncorrect = function() {
@@ -62,7 +63,7 @@ var Tutorial = function() {
 			problemSets[ problemSet ].splice( problemIndex, 1 );
 		};
 		
-		// For the remainingOrRetries nextProblemType, choose appropriately between the remaining or incorrect problem sets
+		// For the remainingOrRetries nextProblemSetType, choose appropriately between the remaining or incorrect problem sets
 		var remainingOrRetriesProblemSet = function() {
 			if ( problemSets[ 'remaining' ].length === 0 && problemSets[ 'retries' ].length === 0 ) { return null; }
 			else if ( problemSets[ 'remaining' ].length === 0 ) {
@@ -127,7 +128,7 @@ var Tutorial = function() {
 		var setCurrentProblem = function( identifier, problemSet ) {
 			previousProblem = currentProblem;
 			currentProblem = identifier;
-			currentProblemSet = problemSet;
+			lastProblemSet = problemSet;
 		};
 		
 		//TODO: Delete this when finished
@@ -181,7 +182,7 @@ var Tutorial = function() {
 			},
 			
 			'currentProblem' : function() {
-				if ( currentProblem === undefined ) { nextProblemLookupByType[ nextProblemType ](); }
+				if ( currentProblem === undefined ) { nextProblemLookupByType[ nextProblemSetType ](); }
 				if ( currentProblem === null ) { return null; }
 				var identifiedCurrentProblem = problems[ currentProblem ];
 				identifiedCurrentProblem[ 'identifier' ] = currentProblem;
@@ -222,18 +223,18 @@ var Tutorial = function() {
 				}
 			},
 			
-			'setProblemType' : function( newNextProblemType ) {
-				if ( ! nextProblemLookupByType[ newNextProblemType ] ) {
-					throw 'The problem type "' + newNextProblemType + '" is not one of the following: "remainingOrRetries", "remaining", "incorrect", or "correct".';
+			'setProblemType' : function( newNextProblemSetType ) {
+				if ( ! nextProblemLookupByType[ newNextProblemSetType ] ) {
+					throw 'The problem type "' + newNextProblemSetType + '" is not one of the following: "remainingOrRetries", "remaining", "incorrect", or "correct".';
 				}
-				nextProblemType = newNextProblemType;
+				nextProblemSetType = newNextProblemSetType;
 			},
 
-			'setRemainingProblemsSelectionMethod' : function( newMethod ) {
+			'setRandomOrSequential' : function( newMethod ) {
 				if ( newMethod !== 'random' || newMethod !== 'sequential' ) {
-					throw 'Your remaining problem selection method "' + newMethod + '" needs to be either "random" or "sequential".';
+					throw 'Your problem selection method "' + newMethod + '" needs to be either "random" or "sequential".';
 				}
-				remainingProblemsSelectionMethod = newMethod;
+				randomOrSequential = newMethod;
 			}
 		};
 	};
