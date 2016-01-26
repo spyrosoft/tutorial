@@ -28,22 +28,22 @@ var Tutorial = function() {
 		var currentProblem;
 		var previousProblem;
 		
-		// Needed when nextProblemType is 'remainingOrIncorrect' to know which type the current problem is
+		// Needed when nextProblemType is 'remainingOrRetries' to know which type the current problem is
 		var currentProblemSet;
 		
-		var nextProblemType = 'remainingOrIncorrect';
+		var nextProblemType = 'remainingOrRetries';
 		
-		var remainingProblemsSelectionMethod = 'remainingOrIncorrect';
+		var remainingProblemsSelectionMethod = 'remainingOrRetries';
 		
 		// Used to locate and set the next problem for a given nextProblemType
 		var nextProblemLookupByType = {
-			'remainingOrIncorrect' : function() { nextProblemRemainingOrIncorrect(); },
+			'remainingOrRetries' : function() { nextProblemRemainingOrIncorrect(); },
 			'remaining' : function() { nextProblemByType( 'remaining' ); },
 			'incorrect' : function() { nextProblemByType( 'incorrect' ); },
 			'correct' : function() { nextProblemByType( 'correct' ); }
 		};
 		
-		// All types but remainingOrIncorrect; the others are straight forward
+		// All types but remainingOrRetries; the others are straight forward
 		var nextProblemByType = function( problemSet ) {
 			setCurrentProblemFromSet( problemSet );
 			currentProblemSet = problemSet;
@@ -62,7 +62,7 @@ var Tutorial = function() {
 			problemSets[ problemSet ].splice( problemIndex, 1 );
 		};
 		
-		// For the remainingOrIncorrect nextProblemType, choose appropriately between the remaining or incorrect problem sets
+		// For the remainingOrRetries nextProblemType, choose appropriately between the remaining or incorrect problem sets
 		var remainingOrRetriesProblemSet = function() {
 			if ( problemSets[ 'remaining' ].length === 0 && problemSets[ 'retries' ].length === 0 ) { return null; }
 			else if ( problemSets[ 'remaining' ].length === 0 ) {
@@ -224,7 +224,7 @@ var Tutorial = function() {
 			
 			'setProblemType' : function( newNextProblemType ) {
 				if ( ! nextProblemLookupByType[ newNextProblemType ] ) {
-					throw 'The problem type "' + newNextProblemType + '" is not one of the following: "remainingOrIncorrect", "remaining", "incorrect", or "correct".';
+					throw 'The problem type "' + newNextProblemType + '" is not one of the following: "remainingOrRetries", "remaining", "incorrect", or "correct".';
 				}
 				nextProblemType = newNextProblemType;
 			},
