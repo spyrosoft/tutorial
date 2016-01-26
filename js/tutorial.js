@@ -11,7 +11,7 @@ var Tutorial = function() {
 	var Section = function( newTitle, newIntro ) {
 		var title = newTitle;
 		var intro = newIntro;
-		var retries = 3;
+		var numberOfRetries = 3;
 		
 		// Full problems which can be looked up by identifier
 		var problems = new Object();
@@ -207,7 +207,7 @@ var Tutorial = function() {
 					setCurrentProblem( undefined, undefined );
 				} else {
 					problemSets[ 'incorrect' ].push( currentProblem );
-					for ( var i = 0; i < retries; i++ ) {
+					for ( var i = 0; i < numberOfRetries; i++ ) {
 						problemSets[ 'retries' ].push( currentProblem );
 					}
 				}
@@ -216,7 +216,7 @@ var Tutorial = function() {
 			
 			'setTimesToRetryProblems' : function( newRetries ) {
 				if ( newRetries === Math.floor( newRetries ) && newRetries >= 0 ) {
-					retries = newRetries;
+					numberOfRetries = newRetries;
 				} else {
 					throw 'The number of retries must be an integer greater than or equal to zero.';
 				}
@@ -229,7 +229,6 @@ var Tutorial = function() {
 				nextProblemType = newNextProblemType;
 			},
 
-			//TODO: This needs to adapt to sequential or random problem choosing
 			'setRemainingProblemsSelectionMethod' : function( newMethod ) {
 				if ( newMethod !== 'random' || newMethod !== 'sequential' ) {
 					throw 'Your remaining problem selection method "' + newMethod + '" needs to be either "random" or "sequential".';
