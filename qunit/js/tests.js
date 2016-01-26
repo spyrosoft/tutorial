@@ -12,10 +12,10 @@ QUnit.test(
 	function( assert ) {
 		var newTutorial = new Tutorial();
 		
-		var firstSectionIdentifier = 'first-section-identifier';
+		var firstSectionID = 'first-section-ID';
 		var firstSectionTitle = 'First Section Title';
 		var firstSectionIntro = 'First section intro.';
-		var firstSection = newTutorial.addSection( firstSectionIdentifier, firstSectionTitle, firstSectionIntro );
+		var firstSection = newTutorial.addSection( firstSectionID, firstSectionTitle, firstSectionIntro );
 		
 		assert.ok( firstSection instanceof Object );
 		assert.ok( firstSection.title() === firstSectionTitle );
@@ -25,16 +25,16 @@ QUnit.test(
 
 
 QUnit.test(
-	'Get a Section by it\'s identifier.',
+	'Get a Section by it\'s ID.',
 	function( assert ) {
 		var newTutorial = new Tutorial();
 		
-		var firstSectionIdentifier = 'first-section-identifier';
+		var firstSectionID = 'first-section-ID';
 		var firstSectionTitle = 'First Section Title';
 		var firstSectionIntro = 'First section intro.';
-		newTutorial.addSection( firstSectionIdentifier, firstSectionTitle, firstSectionIntro );
+		newTutorial.addSection( firstSectionID, firstSectionTitle, firstSectionIntro );
 		
-		var firstSection = newTutorial.setCurrentSection( firstSectionIdentifier );
+		var firstSection = newTutorial.setCurrentSection( firstSectionID );
 		
 		assert.ok( firstSection instanceof Object );
 		assert.ok( firstSection.title() === firstSectionTitle );
@@ -48,7 +48,7 @@ QUnit.test(
 	function( assert ) {
 		var newTutorial = new Tutorial();
 		
-		var firstSection = newTutorial.addSection( 'first-section-identifier', 'First Section Title', 'First section intro.' );
+		var firstSection = newTutorial.addSection( 'first-section-ID', 'First Section Title', 'First section intro.' );
 		firstSection.addProblem( '1+1', '1 + 1', '2' );
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		
@@ -66,7 +66,7 @@ QUnit.test(
 	function( assert ) {
 		var newTutorial = new Tutorial();
 		
-		var firstSection = newTutorial.addSection( 'first-section-identifier', 'First Section Title', 'First section intro.' );
+		var firstSection = newTutorial.addSection( 'first-section-ID', 'First Section Title', 'First section intro.' );
 		firstSection.addProblem( '1+1', '1 + 1', '2' );
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		
@@ -74,7 +74,7 @@ QUnit.test(
 		firstSection.checkAnswer( firstQuestion.answer() );
 		
 		var secondQuestion = firstSection.currentProblem();
-		assert.ok( firstQuestion[ 'identifier' ] !== secondQuestion[ 'identifier' ] );
+		assert.ok( firstQuestion[ 'ID' ] !== secondQuestion[ 'ID' ] );
 	}
 );
 
@@ -84,7 +84,7 @@ QUnit.test(
 	function( assert ) {
 		var newTutorial = new Tutorial();
 		
-		var firstSection = newTutorial.addSection( 'first-section-identifier', 'First Section Title', 'First section intro.' );
+		var firstSection = newTutorial.addSection( 'first-section-ID', 'First Section Title', 'First section intro.' );
 		firstSection.addProblem( '1+1', '1 + 1', '2' );
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		firstSection.addProblem( '1+3', '1 + 3', '4' );
@@ -100,7 +100,7 @@ QUnit.test(
 	function( assert ) {
 		var newTutorial = new Tutorial();
 		
-		var firstSection = newTutorial.addSection( 'first-section-identifier', 'First Section Title', 'First section intro.' );
+		var firstSection = newTutorial.addSection( 'first-section-ID', 'First Section Title', 'First section intro.' );
 		firstSection.addProblem( '1+1', '1 + 1', '2' );
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		firstSection.addProblem( '1+3', '1 + 3', '4' );
@@ -121,7 +121,7 @@ QUnit.test(
 	function( assert ) {
 		var newTutorial = new Tutorial();
 		
-		var firstSection = newTutorial.addSection( 'first-section-identifier', 'First Section Title', 'First section intro.' );
+		var firstSection = newTutorial.addSection( 'first-section-ID', 'First Section Title', 'First section intro.' );
 		firstSection.addProblem( '1+1', '1 + 1', '2' );
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		firstSection.addProblem( '1+3', '1 + 3', '4' );
@@ -130,7 +130,7 @@ QUnit.test(
 		
 		var currentProblem = firstSection.currentProblem();
 		var incorrectAnswer = currentProblem.answer() + 1;
-		firstSection.checkAnswer( currentProblem[ 'identifier' ], incorrectAnswer );
+		firstSection.checkAnswer( currentProblem[ 'ID' ], incorrectAnswer );
 		assert.ok( firstSection.problemsRetries().length === 3 );
 	}
 );
