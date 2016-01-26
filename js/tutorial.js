@@ -13,7 +13,7 @@ var Tutorial = function() {
 		var intro = newIntro;
 		var numberOfRetries = 3;
 		var reviewInterval = 2;
-		var mode = 'instruction';
+		var mode = 'mixed';
 		
 		// Full problems which can be looked up by identifier
 		var problems = new Object();
@@ -135,7 +135,6 @@ var Tutorial = function() {
 		var tunnel = function() { return this; };
 		
 		
-		//TODO: Split up the bigger functions
 		return {
 			// Access the read-only closed variables
 			'title' : function() { return title; },
@@ -150,18 +149,16 @@ var Tutorial = function() {
 			'addProblem' : function( identifier, prompt, answer, explanation ) {
 				var newProblem = new Problem( prompt, answer, explanation );
 				problems[ identifier ] = newProblem;
-				problemSets[ 'remaining' ].push( identifier );
 			},
 			
 			'addProblemAnswer' : function( identifier, newAnswer ) {
-				var problemsRemaining = problemSets[ 'remaining' ];
-				if ( problemsRemaining[ identifier ] instanceof Array ) {
-					problemsRemaining[ identifier ].push( newAnswer );
+				if ( problems[ identifier ] instanceof Array ) {
+					problems[ identifier ].push( newAnswer );
 				} else {
-					var currentAnswer = problemsRemaining[ identifier ];
-					problemsRemaining[ identifier ] = new Array();
-					problemsRemaining[ identifier ].push( currentAnswer );
-					problemsRemaining[ identifier ].push( newAnswer );
+					var currentAnswer = problems[ identifier ];
+					problems[ identifier ] = new Array();
+					problems[ identifier ].push( currentAnswer );
+					problems[ identifier ].push( newAnswer );
 				}
 			},
 			
@@ -189,15 +186,14 @@ var Tutorial = function() {
 				return identifiedCurrentProblem;
 			},
 			
+			//TODO: This function is too long
 			'checkAnswer' : function( answer ) {
 				var problemCorrect = false;
 				if ( problems[ currentProblem ].answer() instanceof Array ) {
 					problems[ currentProblem ].answer().forEach(
 						//TODO: Convert this to deepEquals for complex answer structures like arrays or objects
 						function( problemAnswer ) {
-							if ( problemAnswer === answer ) {
-								problemCorrect = true;
-							}
+							if ( problemAnswer === answer ) { problemCorrect = true; }
 						}
 					);
 				} else {
@@ -245,17 +241,9 @@ var Tutorial = function() {
 		var explanation = newExplanation;
 		
 		return {
-			'prompt' : function() {
-				return prompt;
-			},
-			
-			'answer' : function() {
-				return answer;
-			},
-			
-			'explanation' : function() {
-				return explanation;
-			}
+			'prompt' : function() { return prompt; },
+			'answer' : function() { return answer; },
+			'explanation' : function() { return explanation; }
 		};
 	};
 	
