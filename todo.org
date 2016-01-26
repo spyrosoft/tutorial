@@ -1,4 +1,6 @@
 * Minimally Viable
+** Problems need to be either random or sequential
+** Split off instruction and review functionality from Section into new classes
 ** Run a review at the end of each section if there were missed problems
 ** User can choose between random problems, only missed problems, or only new problems
 *** This state applies to either each individual section or the overall tutorial
