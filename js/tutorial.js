@@ -180,7 +180,7 @@ var Tutorial = function() {
 				
 			},
 			
-			'getCurrentProblem' : function() {
+			'currentProblem' : function() {
 				if ( currentProblem === undefined ) { nextProblemLookupByType[ nextProblemType ](); }
 				if ( currentProblem === null ) { return null; }
 				var identifiedCurrentProblem = problems[ currentProblem ];
@@ -276,10 +276,10 @@ var Tutorial = function() {
 					currentSectionIndex = identifierIndex;
 				}
 			}
-			return this.getCurrentSection();
+			return this.currentSection();
 		},
 		
-		getCurrentSection : function() {
+		currentSection : function() {
 			if ( typeof currentSectionIndex === 'undefined' ) {
 				if ( sectionIdentifiers.length === 0 ) {
 					throw "No sections have been created.";
@@ -294,7 +294,7 @@ var Tutorial = function() {
 		loadNextSection : function() {
 			currentSectionIndex++;
 			if ( currentSectionIndex >= sectionIdentifiers.length ) { return null; }
-			return this.getCurrentSection();
+			return this.currentSection();
 		}
 	};
 };

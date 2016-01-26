@@ -52,10 +52,10 @@ QUnit.test(
 		firstSection.addProblem( '1+1', '1 + 1', '2' );
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		
-		var firstQuestion = firstSection.getCurrentProblem();
+		var firstQuestion = firstSection.currentProblem();
 		assert.ok( typeof firstSection.checkAnswer( firstQuestion.answer() ) === 'boolean' );
 		
-		var secondQuestion = firstSection.getCurrentProblem();
+		var secondQuestion = firstSection.currentProblem();
 		assert.ok( ! firstSection.checkAnswer( secondQuestion.answer() + 1 ) );
 	}
 );
@@ -70,10 +70,10 @@ QUnit.test(
 		firstSection.addProblem( '1+1', '1 + 1', '2' );
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		
-		var firstQuestion = firstSection.getCurrentProblem();
+		var firstQuestion = firstSection.currentProblem();
 		firstSection.checkAnswer( firstQuestion.answer() );
 		
-		var secondQuestion = firstSection.getCurrentProblem();
+		var secondQuestion = firstSection.currentProblem();
 		assert.ok( firstQuestion[ 'identifier' ] !== secondQuestion[ 'identifier' ] );
 	}
 );
@@ -89,7 +89,7 @@ QUnit.test(
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		firstSection.addProblem( '1+3', '1 + 3', '4' );
 		
-		firstSection.getCurrentProblem();
+		firstSection.currentProblem();
 		assert.ok( firstSection.problemsRemaining().length === 2 );
 	}
 );
@@ -105,10 +105,10 @@ QUnit.test(
 		firstSection.addProblem( '1+2', '1 + 2', '3' );
 		firstSection.addProblem( '1+3', '1 + 3', '4' );
 		
-		var currentProblem = firstSection.getCurrentProblem();
+		var currentProblem = firstSection.currentProblem();
 		firstSection.checkAnswer( currentProblem.answer() );
 		
-		currentProblem = firstSection.getCurrentProblem();
+		currentProblem = firstSection.currentProblem();
 		firstSection.checkAnswer( currentProblem.answer() );
 		
 		assert.ok( firstSection.problemsCorrect().length === 2 );
@@ -128,7 +128,7 @@ QUnit.test(
 		
 		firstSection.setTimesToRetryProblems( 3 );
 		
-		var currentProblem = firstSection.getCurrentProblem();
+		var currentProblem = firstSection.currentProblem();
 		var incorrectAnswer = currentProblem.answer() + 1;
 		firstSection.checkAnswer( currentProblem[ 'identifier' ], incorrectAnswer );
 		assert.ok( firstSection.problemsRetries().length === 3 );
