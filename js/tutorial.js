@@ -1,9 +1,9 @@
 var Tutorial = function() {
-	// Look up sections by identifier
+	// Look up sections by ID
 	var sections = new Object();
 	
-	// Look up section identifiers by index
-	var sectionIdentifiers = new Array();
+	// Look up section IDs by index
+	var sectionIDs = new Array();
 	
 	// Keep track of the current section index for looking up next or previous sections
 	var currentSectionIndex;
@@ -13,12 +13,20 @@ var Tutorial = function() {
 		var intro = newIntro;
 		var numberOfRetries = 3;
 		var reviewInterval = 2;
-		var mode = 'mixed';
 		
-		// Full problems which can be looked up by identifier
+		// mode can have a value of instruction, review, or mixed
+		var mode = 'mixed';
+		// Needed when mode is mixed to know if the current problem is instruction or review
+		var currentMode = 'instruction';
+		
+		// Full problems which can be looked up by ID
 		var problems = new Object();
 		
-		// Problem identifiers only (no use having redundant data) which can be looked up by index
+		// Problem IDs which can be looked up by index in sequential order
+		var problemsSequence = new Array();
+		var currentProblemIndex = 0;
+		
+		// Problem IDs only (no use having redundant data) which can be looked up by index
 		var problemSets = {
 			'remaining' : new Array(),
 			'correct' : new Array(),
@@ -26,19 +34,20 @@ var Tutorial = function() {
 			'retries' : new Array()
 		};
 		
-		// Problem identifier of the current problem and the previous problem
+		// Problem ID of the current problem and the previous problem
 		var currentProblem;
 		var previousProblem;
 		
+		// nextProblemSetType can have a value of any of the problem sets or remainingOrRetries
+		var nextProblemSetType = 'remainingOrRetries';
 		// Needed when nextProblemSetType is 'remainingOrRetries' to know which type the current problem is
 		var lastProblemSet;
-		var nextProblemSetType = 'remainingOrRetries';
 		
 		var randomOrSequential = 'sequential';
 		
 		// Used to locate and set the next problem for a given nextProblemSetType
 		var nextProblemLookupByType = {
-			'remainingOrRetries' : function() { nextProblemRemainingOrIncorrect(); },
+			'remainingOrRetries' : function() { nextProblemRemainingOrRetries(); },
 			'remaining' : function() { nextProblemByType( 'remaining' ); },
 			'incorrect' : function() { nextProblemByType( 'incorrect' ); },
 			'correct' : function() { nextProblemByType( 'correct' ); }
@@ -50,17 +59,28 @@ var Tutorial = function() {
 			lastProblemSet = problemSet;
 		};
 		
-		var nextProblemRemainingOrIncorrect = function() {
+		var nextProblemRemainingOrRetries = function() {
 			var problemSet = remainingOrRetriesProblemSet();
 			if ( problemSet === null ) { setCurrentProblem( null, null ); return; }
-			var problemIndex = getRandomProblemIndex( problemSet );
-			var problemIdentifier = problemSets[ problemSet ][ problemIndex ];
-			if ( problemIdentifier === previousProblem ) {
-				nextProblemRemainingOrIncorrect();
-				return;
+			
+			if ( randomOrSequential === 'sequential' ) {
+				
+			} else if ( randomOrSequential === 'random' ) {
+				var problemIndex = getRandomProblemIndex( problemSet );
+				var problemID = problemSets[ problemSet ][ problemIndex ];
+				if ( problemID === previousProblem ) {
+					nextProblemRemainingOrRetries();
+					return;
+				}
+			} else {
+				throw 'randomOrSequential needs to be either "random" or "sequential"; currently set to: ' + randomOrSequential;
 			}
-			setCurrentProblem( problemIdentifier, problemSet );
-			problemSets[ problemSet ].splice( problemIndex, 1 );
+			
+			setCurrentProblem( problemID, problemSet );
+			
+			if ( currentMode === 'review' ) {
+				problemSets[ problemSet ].splice( problemIndex, 1 );
+			}
 		};
 		
 		// For the remainingOrRetries nextProblemSetType, choose appropriately between the remaining or incorrect problem sets
@@ -119,15 +139,15 @@ var Tutorial = function() {
 		};
 		
 		var getProblemByIndex = function( problemSet, problemIndex ) {
-			var problemIdentifier = problemSets[ problemSet ][ problemIndex ];
-			var newProblem = problems[ problemIdentifier ];
-			newProblem[ 'identifier' ] = problemIdentifier;
+			var problemID = problemSets[ problemSet ][ problemIndex ];
+			var newProblem = problems[ problemID ];
+			newProblem[ 'ID' ] = problemID;
 			return newProblem;
 		};
 		
-		var setCurrentProblem = function( identifier, problemSet ) {
+		var setCurrentProblem = function( ID, problemSet ) {
 			previousProblem = currentProblem;
-			currentProblem = identifier;
+			currentProblem = ID;
 			lastProblemSet = problemSet;
 		};
 		
@@ -139,26 +159,28 @@ var Tutorial = function() {
 			// Access the read-only closed variables
 			'title' : function() { return title; },
 			'intro' : function() { return intro; },
+			'currentMode' : function() { return currentMode; },
 			'problems' : function () { return problems; },
 			'problemsRemaining' : function() { return problemSets[ 'remaining' ]; },
 			'problemsCorrect' : function() { return problemSets[ 'correct' ]; },
 			'problemsIncorrect' : function() { return problemSets[ 'incorrect' ]; },
 			'problemsRetries' : function() { return problemSets[ 'retries' ]; },
 			
-			// This may cause issues if the user wants to use an array as the value for a single answer - it will be treated as multiple answers
-			'addProblem' : function( identifier, prompt, answer, explanation ) {
+			//TODO: This may cause issues if the user wants to use an array as the value for a single answer - it will be treated as multiple answers
+			'addProblem' : function( ID, prompt, answer, explanation ) {
 				var newProblem = new Problem( prompt, answer, explanation );
-				problems[ identifier ] = newProblem;
+				problems[ ID ] = newProblem;
+				problemsSequence.push( ID );
 			},
 			
-			'addProblemAnswer' : function( identifier, newAnswer ) {
-				if ( problems[ identifier ] instanceof Array ) {
-					problems[ identifier ].push( newAnswer );
+			'addProblemAnswer' : function( ID, newAnswer ) {
+				if ( problems[ ID ] instanceof Array ) {
+					problems[ ID ].push( newAnswer );
 				} else {
-					var currentAnswer = problems[ identifier ];
-					problems[ identifier ] = new Array();
-					problems[ identifier ].push( currentAnswer );
-					problems[ identifier ].push( newAnswer );
+					var currentAnswer = problems[ ID ];
+					problems[ ID ] = new Array();
+					problems[ ID ].push( currentAnswer );
+					problems[ ID ].push( newAnswer );
 				}
 			},
 			
@@ -182,7 +204,7 @@ var Tutorial = function() {
 				if ( currentProblem === undefined ) { nextProblemLookupByType[ nextProblemSetType ](); }
 				if ( currentProblem === null ) { return null; }
 				var identifiedCurrentProblem = problems[ currentProblem ];
-				identifiedCurrentProblem[ 'identifier' ] = currentProblem;
+				identifiedCurrentProblem[ 'ID' ] = currentProblem;
 				return identifiedCurrentProblem;
 			},
 			
@@ -200,12 +222,16 @@ var Tutorial = function() {
 					problemCorrect = problems[ currentProblem ].answer() === answer;
 				}
 				if ( problemCorrect ) {
-					problemSets[ 'correct' ].push( currentProblem );
 					setCurrentProblem( undefined, undefined );
-				} else {
-					problemSets[ 'incorrect' ].push( currentProblem );
-					for ( var i = 0; i < numberOfRetries; i++ ) {
-						problemSets[ 'retries' ].push( currentProblem );
+				}
+				if ( currentMode === 'review' ) {
+					if ( problemCorrect ) {
+						problemSets[ 'correct' ].push( currentProblem );
+					} else {
+						problemSets[ 'incorrect' ].push( currentProblem );
+						for ( var i = 0; i < numberOfRetries; i++ ) {
+							problemSets[ 'retries' ].push( currentProblem );
+						}
 					}
 				}
 				return problemCorrect;
@@ -248,21 +274,21 @@ var Tutorial = function() {
 	};
 	
 	return {
-		addSection : function( identifier, title, intro ) {
+		addSection : function( ID, title, intro ) {
 			var newSection = new Section( title, intro );
-			sections[ identifier ] = newSection;
-			sectionIdentifiers.push( identifier );
+			sections[ ID ] = newSection;
+			sectionIDs.push( ID );
 			return newSection;
 		},
 		
-		setCurrentSection : function( identifier ) {
-			if ( typeof sections[ identifier ] === 'undefined' ) {
-				throw 'No section identified by "' + identifier + '" exists.';
+		setCurrentSection : function( ID ) {
+			if ( typeof sections[ ID ] === 'undefined' ) {
+				throw 'No section identified by "' + ID + '" exists.';
 			}
-			var identifierIndex = 0;
-			for ( identifierIndex in sectionIdentifiers ) {
-				if ( sectionIdentifiers[ identifierIndex ] === identifier ) {
-					currentSectionIndex = identifierIndex;
+			var IDIndex = 0;
+			for ( IDIndex in sectionIDs ) {
+				if ( sectionIDs[ IDIndex ] === ID ) {
+					currentSectionIndex = IDIndex;
 				}
 			}
 			return this.currentSection();
@@ -270,19 +296,19 @@ var Tutorial = function() {
 		
 		currentSection : function() {
 			if ( typeof currentSectionIndex === 'undefined' ) {
-				if ( sectionIdentifiers.length === 0 ) {
+				if ( sectionIDs.length === 0 ) {
 					throw "No sections have been created.";
 				}
 				currentSectionIndex = 0;
 			}
-			var identifiedCurrentSection = sections[ sectionIdentifiers[ currentSectionIndex ] ];
-			identifiedCurrentSection[ 'identifier' ] = sectionIdentifiers[ currentSectionIndex ];
+			var identifiedCurrentSection = sections[ sectionIDs[ currentSectionIndex ] ];
+			identifiedCurrentSection[ 'ID' ] = sectionIDs[ currentSectionIndex ];
 			return identifiedCurrentSection;
 		},
 		
 		loadNextSection : function() {
 			currentSectionIndex++;
-			if ( currentSectionIndex >= sectionIdentifiers.length ) { return null; }
+			if ( currentSectionIndex >= sectionIDs.length ) { return null; }
 			return this.currentSection();
 		}
 	};
