@@ -6,6 +6,7 @@
 ** Add a problem progress meter - white: incomplete, green: correct, red: incorrect
 ** Add a section navigation
 ** Pass in a callback function for incremental checking of problems in each section
+** Include functions for navigating within each section - seek and next/prev
 
 * Reaching for the Stars
 ** Add option to use weighted random numbers tending towards most recent problems
