@@ -29,6 +29,7 @@ var Tutorial = function() {
 		// Problem IDs only (no use having redundant data) which can be looked up by index
 		var problemSets = {
 			'remaining' : new Array(),
+			// The correct array contains problems marked correct on the first try
 			'correct' : new Array(),
 			'incorrect' : new Array(),
 			'retries' : new Array()
@@ -221,6 +222,7 @@ var Tutorial = function() {
 				} else {
 					problemCorrect = problems[ currentProblem ].answer() === answer;
 				}
+				//TODO: What does this accomplish?
 				if ( problemCorrect ) {
 					setCurrentProblem( undefined, undefined );
 				}
