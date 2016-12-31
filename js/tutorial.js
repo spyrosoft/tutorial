@@ -24,7 +24,7 @@ var Tutorial = function() {
 		
 		// Problem IDs which can be looked up by index in sequential order
 		var problemsSequence = new Array();
-		var currentProblemIndex = 0;
+		var currentProblemIndex = -1;
 		
 		// Problem IDs only (no use having redundant data) which can be looked up by index
 		var problemSets = {
@@ -56,19 +56,27 @@ var Tutorial = function() {
 		
 		// All types but remainingOrRetries; the others are straight forward
 		var nextProblemByType = function( problemSet ) {
-			setCurrentProblemFromSet( problemSet );
 			lastProblemSet = problemSet;
+			setCurrentProblemFromSet( problemSet );
 		};
 		
+		//TODO: This function is too long:
 		var nextProblemRemainingOrRetries = function() {
 			var problemSet = remainingOrRetriesProblemSet();
+			var problemID;
+			
 			if ( problemSet === null ) { setCurrentProblem( null, null ); return; }
 			
 			if ( randomOrSequential === 'sequential' ) {
-				
+				currentProblemIndex++;
+				if ( currentProblemIndex === problemSets[ problemSet ].length ) {
+					setCurrentProblem( null, null );
+					return;
+				}
+				problemID = problemSets[ problemSet ][ currentProblemIndex ];
 			} else if ( randomOrSequential === 'random' ) {
-				var problemIndex = getRandomProblemIndex( problemSet );
-				var problemID = problemSets[ problemSet ][ problemIndex ];
+				currentProblemIndex = getRandomProblemIndex( problemSet );
+				problemID = problemSets[ problemSet ][ currentProblemIndex ];
 				if ( problemID === previousProblem ) {
 					nextProblemRemainingOrRetries();
 					return;
@@ -80,7 +88,7 @@ var Tutorial = function() {
 			setCurrentProblem( problemID, problemSet );
 			
 			if ( currentMode === 'review' ) {
-				problemSets[ problemSet ].splice( problemIndex, 1 );
+				problemSets[ problemSet ].splice( currentProblemIndex, 1 );
 			}
 		};
 		
@@ -152,26 +160,23 @@ var Tutorial = function() {
 			lastProblemSet = problemSet;
 		};
 		
-		//TODO: Delete this when finished
-		var tunnel = function() { return this; };
-		
-		
 		return {
 			// Access the read-only closed variables
 			'title' : function() { return title; },
 			'intro' : function() { return intro; },
 			'currentMode' : function() { return currentMode; },
-			'problems' : function () { return problems; },
-			'problemsRemaining' : function() { return problemSets[ 'remaining' ]; },
-			'problemsCorrect' : function() { return problemSets[ 'correct' ]; },
-			'problemsIncorrect' : function() { return problemSets[ 'incorrect' ]; },
-			'problemsRetries' : function() { return problemSets[ 'retries' ]; },
+			'problems' : function () { return JSON.parse( JSON.stringify( problems ) ); },
+			'problemsRemaining' : function() { return JSON.parse( JSON.stringify( problemSets[ 'remaining' ] ) ); },
+			'problemsCorrect' : function() { return JSON.parse( JSON.stringify( problemSets[ 'correct' ] ) ); },
+			'problemsIncorrect' : function() { return JSON.parse( JSON.stringify( problemSets[ 'incorrect' ] ) ); },
+			'problemsRetries' : function() { return JSON.parse( JSON.stringify( problemSets[ 'retries' ] ) ); },
 			
 			//TODO: This may cause issues if the user wants to use an array as the value for a single answer - it will be treated as multiple answers
 			'addProblem' : function( ID, prompt, answer, explanation ) {
 				var newProblem = new Problem( prompt, answer, explanation );
 				problems[ ID ] = newProblem;
 				problemsSequence.push( ID );
+				problemSets[ 'remaining' ].push( ID );
 			},
 			
 			'addProblemAnswer' : function( ID, newAnswer ) {
@@ -259,7 +264,10 @@ var Tutorial = function() {
 					throw 'Your problem selection method "' + newMethod + '" needs to be either "random" or "sequential".';
 				}
 				randomOrSequential = newMethod;
-			}
+			},
+			
+			//TODO: Delete this when finished
+			tunnel : function() { return this; }
 		};
 	};
 	
