@@ -68,7 +68,10 @@ var Tutorial = function() {
 			if ( problemSet === null ) { setCurrentProblem( null, null ); return; }
 			
 			if ( randomOrSequential === 'sequential' ) {
-				currentProblemIndex++;
+				// If the current problem is null, this is the first problem in the set
+				if ( currentProblem !== null ) {
+					currentProblemIndex++;
+				}
 				if ( currentProblemIndex === problemSets[ problemSet ].length ) {
 					setCurrentProblem( null, null );
 					return;
